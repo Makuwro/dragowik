@@ -2,10 +2,21 @@ import React from "react";
 import "./styles/navigation.css";
 
 class App extends React.Component {
+  
+  constructor(props) {
+    super(props);
+    this.navRef = React.createRef();
+  };
+  
+  toggleMenu() {
+    const navRef = this.navRef.current;
+    navRef.classList.toggle("nav-closed");
+  };
+  
   render() {
     return (
       <div className="App">
-        <nav>
+        <nav ref={this.navRef}>
           <div id="no-img-header">
             The Showrunners Wiki
           </div>
@@ -40,8 +51,18 @@ class App extends React.Component {
             </div>
           </div>
           
-          <div id="nav-file-info">
-          
+          <div id="nav-close">
+            <button onClick={() => {
+              console.log("Close button pressed");
+              this.toggleMenu();
+            }}>
+              <svg>    
+                <image href="/svgs/cross.svg" width="100%" height="100%"/>    
+              </svg>
+              <div>
+                Close
+              </div>
+            </button>
           </div>
         </nav>
       </div>

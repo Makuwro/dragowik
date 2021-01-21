@@ -3,6 +3,15 @@ nav {
   height: 100vh;
   overflow: hidden;
   color: white;
+  position: absolute;
+  width: 100vw;
+  top: 0%;
+}
+
+.nav-closed {
+  top: 100%;
+  position: fixed;
+  transition: top 0.25s;
 }
 
 /* Logo */
@@ -12,11 +21,17 @@ nav {
   font-size: 7vw;
   margin-top: 10%;
   letter-spacing: 0.25vw;
+  height: 5%;
 }
 
 /* Topic info */
+#nav-topic-info {
+  height: 7%;
+  margin-top: 10%;
+}
+
 #nav-topic-name {
-  margin-top: 5%;
+  margin-top: 7%;
   padding-top: 3%;
   font-weight: bold;
   padding-bottom: 3%;
@@ -30,6 +45,10 @@ nav {
 }
 
 /* Outline info */
+#nav-outline {
+  height: 58%;
+}
+
 #nav-outline-header {
   text-transform: uppercase;
   margin-top: 6%;
@@ -38,7 +57,7 @@ nav {
 
 #nav-outline-list {
   font-size: 7.5vw;
-  height: 55vh;
+  height: 95%;
   overflow: scroll;
 }
 
@@ -69,10 +88,36 @@ nav {
 }
 
 /* File info */
-#nav-file-info {
-  background-color: black;
-  height: 20vh;
-  margin-top: 2vh;
-  clip-path: polygon(0 50%, 0% 100%, 100% 100%, 100% 50%, 75% 15%, 50% 40%, 25% 15%);
-  background-image: url(https://bashooka.com/wp-content/uploads/2018/04/scg-canvas-background-animation-20.jpg);
+#nav-close {
+  height: 16%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#nav-close button {
+  display: flex;
+  justify-content: center;
+  height: 60%;
+  background: #c0d4ff;
+  border-radius: 12vw;
+  border: none;
+  width: 70%;
+}
+
+#nav-close svg {
+  width: 20%;
+  height: 100%;
+}
+
+#nav-close button div {
+  font-size: 11vw;
+  text-transform: uppercase;
+  margin-left: 3vw;
+  font-weight: bold;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  color: #4d5987;
 }
