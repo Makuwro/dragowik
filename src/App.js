@@ -11,6 +11,13 @@ class App extends React.Component {
   toggleMenu() {
     const navRef = this.navRef.current;
     navRef.classList.toggle("nav-closed");
+    navRef.classList.toggle("invisible");
+    
+    function showOutlineButton() {
+      
+    };
+    
+    setTimeout(showOutlineButton, 100);
   };
   
   render() {
@@ -65,6 +72,14 @@ class App extends React.Component {
             </button>
           </div>
         </nav>
+        <button id="show-outline" onClick={() => {
+          console.log("Open button pressed");
+          this.toggleMenu();
+        }}>
+          <div>
+            Show outline
+          </div>
+        </button>
       </div>
     );
   };

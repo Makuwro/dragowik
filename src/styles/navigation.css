@@ -5,13 +5,24 @@ nav {
   color: white;
   position: absolute;
   width: 100vw;
-  top: 0%;
+  opacity: 1;
+  left: 0;
+  top: 0;
+  z-index: 2;
+  transition: opacity 0.15s, height 0.2s, width 0.2s, left 0.2s, top 0.2s;
 }
 
 .nav-closed {
-  top: 100%;
   position: fixed;
-  transition: top 0.25s;
+  width: 0vw;
+  height: 0vh;
+  left: 50vw;
+  top: 90vh;
+  transition: opacity 0.15s, height 0.2s, width 0.2s, left 0.2s, top 0.2s;
+}
+
+.invisible {
+  opacity: 0;
 }
 
 /* Logo */
@@ -115,6 +126,30 @@ nav {
   font-size: 11vw;
   text-transform: uppercase;
   margin-left: 3vw;
+  font-weight: bold;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  color: #4d5987;
+}
+
+/* When the nav is closed */
+#show-outline {
+  display: flex;
+  justify-content: center;
+  height: 10vh;
+  background: #c0d4ff;
+  border-radius: 12vw;
+  border: none;
+  width: 70vw;
+  position: absolute;
+  bottom: 5vh;
+  left: 15vw;
+}
+
+#show-outline div {
+  font-size: 7vw;
+  text-transform: uppercase;
   font-weight: bold;
   height: 100%;
   display: flex;
