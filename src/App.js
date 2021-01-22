@@ -4,6 +4,7 @@ import "./styles/navigation.css";
 import Header from "./comps/Header";
 import Article from "./comps/Article";
 import Outline from "./comps/Outline";
+import UserRegistration from "./comps/UserRegistration";
 import {Switch, Route, BrowserRouter as Router} from "react-router-dom";
 
 class App extends React.Component {
@@ -42,6 +43,7 @@ class App extends React.Component {
               <Outline articleName="Dream" headers={this.headers} />
               <Article articleName="Dream" content={this.headers} />
             </Route>
+            
             <Route path="/wiki/article/Book-3">
               <Helmet>
                 <title>Book 3 - The Showrunners Wiki</title>
@@ -49,6 +51,14 @@ class App extends React.Component {
               <Header wikiName="The Showrunners Wiki" />
               <Outline articleName="Book 3" headers={this.headers} />
               <Article articleName="Book 3" content={this.headers} />
+            </Route>
+            
+            <Route path="/wiki/register">
+              <Helmet>
+                <title>Sign up to contribute to The Showrunners Wiki</title>
+              </Helmet>
+              <Header wikiName="The Showrunners Wiki" />
+              <UserRegistration />
             </Route>
           </Switch>
         </Router>

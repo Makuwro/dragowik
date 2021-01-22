@@ -1,0 +1,88 @@
+#registration {
+  color: #191a1e;
+  margin: 3vh 6vw;
+}
+
+#registration-notice {
+  padding: 2vh 10vw;
+  text-align: center;
+  font-size: 4vw;
+  background-color: #c0d4ff;
+  clip-path: polygon(5% 0, 0 25%, 0% 100%, 100% 100%, 100% 25%, 95% 0);
+}
+
+#registration-form {
+  margin-top: 5vh;
+}
+
+.registration-section {
+  margin-top: 4vh;
+  border-bottom: 1vw dashed gray;
+}
+
+.registration-section div {
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.password {
+  letter-spacing: 1vw;
+}
+
+.registration-section input {
+  font-family: "Lexend Deca", Arial, sans-serif;
+  font-size: 5vw;
+  border: none;
+  padding-bottom: 1vh;
+  width: 100%;
+  margin-top: 1vh;
+}
+
+#registration-terms {
+  margin-top: 5vh;
+  border: none;
+  display: flex;
+  align-items: center;
+}
+
+#registration-terms input {
+  width: 1.2em !important;
+  height: 1.2em;
+  margin-right: 3vw;
+  margin-top: 0 !important;
+  margin-bottom: 0;
+}
+
+a {
+  color: #3c78d8;
+  text-decoration: none;
+}
+
+a:hover {
+  font-weight: 700;
+}
+
+#registration-submit {
+  display: flex;
+  justify-content: center;
+  height: 10vh;
+  background: #c0d4ff;
+  border-radius: 12vw;
+  border: none;
+  width: 70vw;
+  position: fixed;
+  bottom: 5vh;
+  left: 15vw;
+}
+
+#registration-submit input {
+  border: none;
+  background: transparent;
+  width: 100%;
+  font-size: 7vw;
+  text-transform: uppercase;
+  font-weight: bold;
+  height: 100%;
+  align-items: center;
+  color: #4d5987;
+}
