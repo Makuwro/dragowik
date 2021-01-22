@@ -32,19 +32,6 @@ class Outline extends React.Component {
             </div>
             
             <div id="nav-outline-list">
-              <h1>Description</h1>
-              <h2>Role in the story</h2>
-              <h2>Physical description</h2>
-              <h3>Book 1: Trust and Safety</h3>
-              <h3>Book 2: The Worldender</h3>
-              <h3>Book 3: Now in Color</h3>
-              <h3>Book 4: Teamwork vs. Dream's Work</h3>
-              <h1>Biography</h1>
-              <h2>Before Book 1</h2>
-              <h2>Book 1: Trust and Safety</h2>
-              <h2>Book 2: The Worldender</h2>
-              <h2>Book 3: Now in Color</h2>
-              <h2>Book 4: Teamwork vs. Dream's Work</h2>
               {this.props.headers.map((header) => {
                 return ["h1","h2","h3","h4","h5","h6"].find((e) => {
                   return e === header[0]
