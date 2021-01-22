@@ -3,7 +3,7 @@ nav {
   height: 100vh;
   overflow: hidden;
   color: white;
-  position: absolute;
+  position: fixed;
   width: 100vw;
   opacity: 1;
   left: 0;
@@ -141,7 +141,7 @@ nav {
   border-radius: 12vw;
   border: none;
   width: 70vw;
-  position: absolute;
+  position: fixed;
   bottom: 5vh;
   left: 15vw;
 }
