@@ -45,6 +45,11 @@ class Outline extends React.Component {
               <h2>Book 2: The Worldender</h2>
               <h2>Book 3: Now in Color</h2>
               <h2>Book 4: Teamwork vs. Dream's Work</h2>
+              {this.props.headers.map((header) => {
+                return ["h1","h2","h3","h4","h5","h6"].find((e) => {
+                  return e === header[0]
+                }) ? React.createElement(header[0], {}, header[1]) : undefined;
+              })}
             </div>
           </div>
           
