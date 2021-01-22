@@ -35,6 +35,11 @@ h1#article-name {
   margin-top: 3vh;
   line-height: 4vh;
   font-size: 5vw;
+  margin-bottom: 18vh;
+}
+
+#article-content div {
+  margin-bottom: 2vh;
 }
 
 #article-content h1 {
