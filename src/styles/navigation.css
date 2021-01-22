@@ -30,19 +30,18 @@ nav {
   font-weight: bold;
   text-align: center;
   font-size: 7vw;
-  margin-top: 10%;
+  margin-top: 4%;
   letter-spacing: 0.25vw;
   height: 5%;
 }
 
 /* Topic info */
 #nav-topic-info {
-  height: 7%;
-  margin-top: 10%;
+  height: 6%;
 }
 
 #nav-topic-name {
-  margin-top: 7%;
+  margin-top: 4%;
   padding-top: 3%;
   font-weight: bold;
   padding-bottom: 3%;
@@ -50,7 +49,7 @@ nav {
 }
 
 #nav-topic-name-text {
-  font-size: 5.5vw;
+  font-size: 7.5vw;
   text-align: center;
   letter-spacing: 0.25vw;
 }
@@ -72,7 +71,7 @@ nav {
   overflow: scroll;
 }
 
-#nav-outline-list h1, h2, h3 {
+#nav-outline-list h1, #nav-outline-list h2, #nav-outline-list h3 {
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;

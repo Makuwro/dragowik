@@ -1,0 +1,16 @@
+header {
+  background-color: #899ff0;
+  height: 7vh;
+}
+
+#header-wiki-name {
+  color: white;
+  font-weight: bold;
+  letter-spacing: 0.25vw;
+  font-size: 6vw;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  height: 100%;
+  align-items: center;
+}

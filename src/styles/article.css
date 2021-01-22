@@ -1,0 +1,54 @@
+article {
+  color: #191a1e;
+  margin: 3vh 6vw;
+}
+
+h1#article-name {
+  margin: 0;
+  font-size: 10vw;
+}
+
+#article-contributors {
+  margin-top: 1vh;
+  color: #595d6b;
+}
+
+#article-contributor-bubbles {
+  height: 5vh;
+}
+
+#article-contributor-bubbles span {
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-right: 2vw;
+  background-color: #595d6b;
+  border-radius: 100%;
+  display: inline-block;
+}
+
+#article-contribs-divider {
+  margin: 0 2vw;
+}
+
+/* Content */
+#article-content {
+  margin-top: 3vh;
+  line-height: 4vh;
+  font-size: 5vw;
+}
+
+#article-content h1 {
+  font-size: 8vw;
+  margin: 3vh 0;
+}
+
+#article-content h2 {
+  font-size: 6.5vw;
+  margin: 2vh 0;
+}
+
+#article-content a {
+  color: #3c78d8;
+  text-decoration: none;
+  font-weight: bold;
+}
