@@ -99,6 +99,9 @@ class UserLogin extends React.Component {
           this.newErrorPrompt("Buzzkill! Server error. We can't log you in right now.");
           
         default:
+          console.log("Unknown login error");
+          this.newErrorPrompt("An unknown error happened");
+          console.warn(err);
           break;
       };
       this.setServerProcessing(false);
