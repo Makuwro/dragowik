@@ -66,13 +66,14 @@ a:hover {
   display: flex;
   justify-content: center;
   height: 10vh;
-  background: #c0d4ff;
+  background-color: #c0d4ff;
   border-radius: 12vw;
   border: none;
   width: 70vw;
   position: fixed;
   bottom: 5vh;
   left: 15vw;
+  transition: background-color 0.25s;
 }
 
 #registration-submit input {
@@ -85,7 +86,18 @@ a:hover {
   height: 100%;
   align-items: center;
   color: #4d5987;
-}.notification-invisible {
+  transition: color 0.25s;
+}
+
+.registration-submit-disabled {
+  background-color: gray !important;
+}
+
+.registration-submit-disabled input {
+  color: black !important;
+}
+
+.notification-invisible {
   opacity: 0 !important;
 }
 
