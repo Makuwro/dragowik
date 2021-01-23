@@ -85,4 +85,32 @@ a:hover {
   height: 100%;
   align-items: center;
   color: #4d5987;
+}.notification-invisible {
+  opacity: 0 !important;
 }
+
+#notification-prompt {
+  position: fixed;
+  z-index: 2;
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  opacity: 1;
+  transition: opacity 0.25s;
+}
+
+#notification-message {
+  background-color: #ff5252;
+  padding: 2vh 2vw;
+  display: flex;
+  width: 80%;
+  font-size: 4.5vw;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-weight: bold;
+  letter-spacing: 0.25vw;
+  line-height: 3.5vh;
+}
+
