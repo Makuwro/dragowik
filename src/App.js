@@ -5,6 +5,7 @@ import Header from "./comps/Header";
 import Article from "./comps/Article";
 import Outline from "./comps/Outline";
 import UserRegistration from "./comps/UserRegistration";
+import UserLogin from "./comps/UserLogin";
 import {Switch, Route, BrowserRouter as Router} from "react-router-dom";
 
 class App extends React.Component {
@@ -59,6 +60,14 @@ class App extends React.Component {
               </Helmet>
               <Header wikiName="The Showrunners Wiki" />
               <UserRegistration />
+            </Route>
+            
+            <Route path="/wiki/login">
+              <Helmet>
+                <title>Welcome back to The Showrunners Wiki</title>
+              </Helmet>
+              <Header wikiName="The Showrunners Wiki" />
+              <UserLogin />
             </Route>
           </Switch>
         </Router>
