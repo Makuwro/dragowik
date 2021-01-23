@@ -81,18 +81,23 @@ class UserRegistration extends React.Component {
         case 409: 
           console.log("Username " + this.state.username + " cannot be re-claimed");
           this.newErrorPrompt("Sorry, username's already claimed!");
-          
           break;
           
         case 500:
           console.log("Buzzkill! Server error. We can't create your account right now.");
           this.newErrorPrompt("Buzzkill! Server error. We can't create your account right now.");
+          break;
           
         default:
+          console.log("Unknown account creation error");
+          this.newErrorPrompt("An unknown error happened");
+          console.warn(err);
           break;
       };
       this.setServerProcessing(false);
+      return false;
     };
+    
     
     return false;
   };
