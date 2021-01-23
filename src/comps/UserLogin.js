@@ -1,10 +1,9 @@
 import React from "react";
 import "../styles/registration.css";
 import NotificationPrompt from "./NotificationPrompt";
-import UserRegistration from "./UserRegistration";
-import {Link} from "react-router-dom";
+import {Link, withRouter} from "react-router-dom";
 
-class UserLogin extends UserRegistration {
+class UserLogin extends React.Component {
   
   constructor(props) {
     super(props);
@@ -17,6 +16,38 @@ class UserLogin extends UserRegistration {
       notifTimeout: null,
       takenUsernames: []
     };
+    
+    this.submitForm = this.submitForm.bind(this);
+  };
+  
+  setServerProcessing(processing) {
+    this.setState({serverProcessing: processing});
+  };
+  
+  setNotificationTimeout(timeout) {
+    this.setState({notifTimeout: timeout});
+  };
+  
+  newErrorPrompt(message) {
+    this.setState({
+      notificationMessage: message,
+      notificationVisible: true
+    });
+    
+    if (this.notifTimeout) clearTimeout(this.notifTimeout);
+    
+    this.notifTimeout = setTimeout(() => {
+      this.setState({
+        notificationVisible: false,
+        notifTimeout: null
+      });
+    }, 3000);
+  };
+  
+  updateValue(event, area) {
+    this.setState({
+      [area]: event.target.value
+    });
   };
   
   async submitForm(e) {
@@ -46,6 +77,8 @@ class UserLogin extends UserRegistration {
       if (!response.ok) {
         throw response;
       };
+      
+      this.props.history.push("/");
       
     } catch (err) {
       switch (response.status) {
@@ -106,4 +139,4 @@ class UserLogin extends UserRegistration {
   };
 };
 
-export default UserLogin;
+export default withRouter(UserLogin);
