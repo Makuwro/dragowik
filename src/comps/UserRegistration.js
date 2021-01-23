@@ -1,6 +1,7 @@
 import React from "react";
 import "../styles/registration.css";
 import NotificationPrompt from "./NotificationPrompt";
+import { withRouter } from "react-router-dom";
 
 class UserRegistration extends React.Component {
   
@@ -73,6 +74,8 @@ class UserRegistration extends React.Component {
         throw response;
       };
       
+      this.props.history.push("/wiki/login");
+      
     } catch (err) {
       switch (response.status) {
         case 409: 
@@ -139,4 +142,4 @@ class UserRegistration extends React.Component {
   };
 };
 
-export default UserRegistration;
+export default withRouter(UserRegistration);
