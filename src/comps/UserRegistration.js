@@ -13,18 +13,11 @@ class UserRegistration extends React.Component {
       notificationVisible: false,
       notificationMessage: "",
       serverProcessing: false,
-      notifTimeout: null
+      notifTimeout: null,
+      takenUsernames: []
     };
     
     this.submitForm = this.submitForm.bind(this);
-  };
-  
-  setNotificationVisible(visible) {
-    this.setState({notificationVisible: visible});
-  };
-  
-  setNotificationMessage(message) {
-    this.setState({notificationMessage: message});
   };
   
   setServerProcessing(processing) {
@@ -33,6 +26,22 @@ class UserRegistration extends React.Component {
   
   setNotificationTimeout(timeout) {
     this.setState({notifTimeout: timeout});
+  };
+  
+  newErrorPrompt(message) {
+    this.setState({
+      notificationMessage: message,
+      notificationVisible: true
+    });
+    
+    if (this.notifTimeout) clearTimeout(this.notifTimeout);
+    
+    this.notifTimeout = setTimeout(() => {
+      this.setState({
+        notificationVisible: false,
+        notifTimeout: null
+      });
+    }, 3000);
   };
   
   async submitForm(e) {
@@ -68,17 +77,13 @@ class UserRegistration extends React.Component {
       switch (response.status) {
         case 409: 
           console.log("Username " + this.state.username + " cannot be re-claimed");
-          this.setNotificationMessage("Sorry, username's already claimed!");
-          this.setNotificationVisible(true);
-          
-          if (this.notifTimeout) clearTimeout(this.notifTimeout);
-          
-          this.notifTimeout = setTimeout(() => {
-            this.setNotificationVisible(false);
-            this.setNotificationTimeout(null);
-          }, 3000);
+          this.newErrorPrompt("Sorry, username's already claimed!");
           
           break;
+          
+        case 500:
+          console.log("Buzzkill! Server error. We can't create your account right now.");
+          this.newErrorPrompt("Buzzkill! Server error. We can't create your account right now.");
           
         default:
           break;
