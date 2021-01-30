@@ -7,5 +7,6 @@ A simple React.js wiki in the works!
 - Collaborative article editor
 - Customizable templates
 
-## Credits
-- [**Draguwro**](https://twitter.com/Draguwro)
+## Acknowledgements
+- [**Draguwro**](https://twitter.com/Draguwro) - Maintainer of Dragowik
+- [Thomas Jockin](http://thomasjockin.com) - Type designer of [Lexend Deca](https://github.com/ThomasJockin/lexend), the default font of the wiki
