@@ -85,18 +85,17 @@ class UserLogin extends React.Component {
         case 403: 
           console.log("Entered wrong password for " + this.state.username);
           this.newErrorPrompt("Wrong password");
-          
           break;
           
         case 404:
           console.log("User " + this.state.username + " doesn't exist");
           this.newErrorPrompt("That user doesn't exist!");
-          
           break;
           
         case 500:
           console.log("Buzzkill! Server error. We can't log you in right now.");
           this.newErrorPrompt("Buzzkill! Server error. We can't log you in right now.");
+          break;
           
         default:
           console.log("Unknown login error");
