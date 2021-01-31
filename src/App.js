@@ -6,6 +6,7 @@ import Article from "./comps/Article";
 import Outline from "./comps/Outline";
 import UserRegistration from "./comps/UserRegistration";
 import UserLogin from "./comps/UserLogin";
+import Editor from "./comps/Editor";
 import {Switch, Route, BrowserRouter as Router} from "react-router-dom";
 
 class App extends React.Component {
@@ -36,7 +37,14 @@ class App extends React.Component {
       <div id="app">
         <Router>
           <Switch>
-            <Route path="/wiki/article/Dream">
+            <Route exact path="/wiki/article/:name/edit">
+              <Helmet>
+                <title>Editing Dream - The Showrunners Wiki</title>
+              </Helmet>
+              <Editor content={this.headers} />
+            </Route>
+            
+            <Route exact path="/wiki/article/Dream">
               <Helmet>
                 <title>Dream - The Showrunners Wiki</title>
               </Helmet>
@@ -54,7 +62,7 @@ class App extends React.Component {
               <Article articleName="Book 3" content={this.headers} />
             </Route>
             
-            <Route path="/wiki/register">
+            <Route exact path="/wiki/register">
               <Helmet>
                 <title>Sign up to contribute to The Showrunners Wiki</title>
               </Helmet>
@@ -62,7 +70,7 @@ class App extends React.Component {
               <UserRegistration />
             </Route>
             
-            <Route path="/wiki/login">
+            <Route exact path="/wiki/login">
               <Helmet>
                 <title>Welcome back to The Showrunners Wiki</title>
               </Helmet>
