@@ -7,12 +7,17 @@ class Article extends React.Component {
   
   constructor(props) {
     super(props);
+    this.articleRef = React.createRef();
   };
+  
+  componentDidMount() {
+    setTimeout(() => this.articleRef.current.classList.toggle("visible"), 300);
+  }
   
   render() {
     
     return (
-      <article>
+      <article ref={this.articleRef}>
         <div id="article-metadata">
           <h1 id="article-name">{this.props.articleName}</h1>
           <div id="article-contributors">
