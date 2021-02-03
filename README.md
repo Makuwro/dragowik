@@ -1,4 +1,4 @@
-# Dragowik 🐲
+# Makuwiki
 
 A simple React.js wiki in the works!
 
