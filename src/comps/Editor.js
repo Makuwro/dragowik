@@ -26,7 +26,7 @@ class Editor extends React.Component {
       <div>
         <header id="editor-format">
           <button id="editor-format-finished">
-            <img src="/icons/checkmark.png" />
+            <img src="/icons/checkmark.png" alt="" />
           </button>
         </header>
         <article ref={this.articleRef}>
