@@ -1,5 +1,5 @@
 import React from "react";
-import {Helmet} from "react-helmet";
+import {Helmet, HelmetProvider} from "react-helmet-async";
 import "./styles/navigation.css";
 import Header from "./comps/Header";
 import Article from "./comps/Article";
@@ -35,59 +35,44 @@ class App extends React.Component {
   
   render() {
     return (
-      <div id="app">
-        <Router>
-          <Switch>
-            <Route exact path="/wiki/article/:name/edit">
-              <Helmet>
-                <title>Editing Dream - The Showrunners Wiki</title>
-              </Helmet>
-              <Editor content={this.headers} />
-            </Route>
-            
-            <Route exact path="/wiki/article/Dream">
-              <Helmet>
-                <title>Dream - The Showrunners Wiki</title>
-              </Helmet>
-              <Header wikiName="The Showrunners Wiki" />
-              <Outline articleName="Dream" headers={this.headers} />
-              <Article articleName="Dream" content={this.headers} />
-            </Route>
-            
-            <Route path="/wiki/article/Book_3">
-              <Helmet>
-                <title>Book 3 - The Showrunners Wiki</title>
-              </Helmet>
-              <Header wikiName="The Showrunners Wiki" />
-              <Outline articleName="Book 3" headers={this.headers} />
-              <Article articleName="Book 3" content={this.headers} />
-            </Route>
-            
-            <Route exact path="/wiki/register">
-              <Helmet>
-                <title>Sign up to contribute to The Showrunners Wiki</title>
-              </Helmet>
-              <Header wikiName="The Showrunners Wiki" />
-              <UserRegistration />
-            </Route>
-            
-            <Route exact path="/wiki/login">
-              <Helmet>
-                <title>Welcome back to The Showrunners Wiki</title>
-              </Helmet>
-              <Header wikiName="The Showrunners Wiki" />
-              <UserLogin />
-            </Route>
-            
-            <Route exact path="/">
-              <Helmet>
-                <title>Welcome to The Showrunners Wiki</title>
-              </Helmet>
-              <Home />
-            </Route>
-          </Switch>
-        </Router>
-      </div>
+      <HelmetProvider>
+        <div id="app">
+          <Router>
+            <Switch>
+              <Route exact path="/wiki/article/:name/edit">
+                <VerifyEditor />
+              </Route>
+              
+              <Route exact path="/wiki/article/:name">
+                <VerifyArticle />
+              </Route>
+              
+              <Route exact path="/wiki/register">
+                <Helmet>
+                  <title>Sign up to contribute to The Showrunners Wiki</title>
+                </Helmet>
+                <Header wikiName="The Showrunners Wiki" />
+                <UserRegistration />
+              </Route>
+              
+              <Route exact path="/wiki/login">
+                <Helmet>
+                  <title>Welcome back to The Showrunners Wiki</title>
+                </Helmet>
+                <Header wikiName="The Showrunners Wiki" />
+                <UserLogin />
+              </Route>
+              
+              <Route exact path="/">
+                <Helmet>
+                  <title>Welcome to The Showrunners Wiki</title>
+                </Helmet>
+                <Home />
+              </Route>
+            </Switch>
+          </Router>
+        </div>
+      </HelmetProvider>
     );
   };
 };
