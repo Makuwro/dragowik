@@ -1,5 +1,6 @@
 import React from "react";
 import "../styles/navigation.css";
+import { v4 as uuidv4 } from "uuid";
 
 class Outline extends React.Component {
   
@@ -35,7 +36,7 @@ class Outline extends React.Component {
               {this.props.headers.map((header) => {
                 return ["h1","h2","h3","h4","h5","h6"].find((e) => {
                   return e === header[0]
-                }) ? React.createElement(header[0], {}, header[1]) : undefined;
+                }) ? React.createElement(header[0], {key: uuidv4()}, header[1]) : undefined;
               })}
             </div>
           </div>

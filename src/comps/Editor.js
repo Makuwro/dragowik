@@ -3,6 +3,7 @@ import "../styles/article.css";
 import "../styles/editor.css";
 import {useRouteMatch, withRouter} from "react-router-dom";
 import parse, {domToReact} from "html-react-parser";
+import { v4 as uuidv4 } from "uuid";
 
 class Editor extends React.Component {
   
@@ -37,7 +38,7 @@ class Editor extends React.Component {
           </div>
           <div id="article-content">{
             this.props.content.map((element) => {
-              return parse("<" + element[0] + ' contenteditable="true">' + element[1] + "<" + element[0] + "/>")
+              return parse("<" + element[0] + ' contenteditable="true" onChange={this.handleChange} key={' + uuidv4() + '}>' + element[1] + "<" + element[0] + "/>")
             })
           }</div>
         </article>
