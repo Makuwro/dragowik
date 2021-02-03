@@ -54,7 +54,7 @@ class App extends React.Component {
               <Article articleName="Dream" content={this.headers} />
             </Route>
             
-            <Route path="/wiki/article/Book-3">
+            <Route path="/wiki/article/Book_3">
               <Helmet>
                 <title>Book 3 - The Showrunners Wiki</title>
               </Helmet>
