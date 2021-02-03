@@ -8,7 +8,7 @@ nav {
   opacity: 1;
   left: 0;
   top: 0;
-  z-index: 2;
+  z-index: 3;
   transition: opacity 0.15s, height 0.2s, width 0.2s, left 0.2s, top 0.2s;
 }
 
@@ -144,6 +144,7 @@ nav {
   position: fixed;
   bottom: 5vh;
   left: 15vw;
+  z-index: 2;
 }
 
 #show-outline div {
