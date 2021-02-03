@@ -1,8 +1,8 @@
 import React from "react";
 import "../styles/article.css";
 import "../styles/editor.css";
-import {useRouteMatch, withRouter} from "react-router-dom";
-import parse, {domToReact} from "html-react-parser";
+import {withRouter} from "react-router-dom";
+import parse from "html-react-parser";
 import { v4 as uuidv4 } from "uuid";
 
 class Editor extends React.Component {
