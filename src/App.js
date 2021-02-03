@@ -29,9 +29,7 @@ const headers = [
 
 function getArticleName(upFunc, edit) {
   var {name} = upFunc();
-  console.log(name);
   const FrontBackRegex = /[^_*]\w+[^_*]/g;
-  console.log("1:" + name.match(FrontBackRegex)[0]);
   if (name.includes(" ")) {
     // Prevent possible double redirect
     var underscoredName = name.replace(" ", "_").match(FrontBackRegex)[0];
@@ -40,7 +38,6 @@ function getArticleName(upFunc, edit) {
     return <Redirect to={"/wiki/article/" + name.match(FrontBackRegex)[0] + (edit ? "/edit" : "")} />;
   };
   var displayName = name.replace("_", " ");
-  console.log(name);
   return displayName;
 };
 
