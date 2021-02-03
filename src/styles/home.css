@@ -1,0 +1,81 @@
+:focus {
+  outline: none;
+}
+
+#home-parent {
+  overflow: hidden;
+  height: 100vh;
+}
+
+#home {
+  top: 0vh;
+  position: relative;
+  opacity: 1;
+  transform: rotate(0deg);
+  transition: top 0.5s, opacity 0.2s, transform 0.5s;
+}
+
+.swoop {
+  top: 60vh !important;
+  opacity: 0 !important;
+  transform: rotate(45deg) !important;
+}
+
+#home-welcome {
+  font-size: 10vw;
+  text-align: center;
+  font-weight: bold;
+  margin-top: 15vh;
+  letter-spacing: 0.25vw;
+}
+
+#home-search-guide {
+  text-align: center;
+  font-weight: bold;
+  color: #313131;
+  letter-spacing: 0.2vw;
+  font-size: 4.5vw;
+}
+
+#home-search {
+  margin-top: 15vh;
+}
+
+#home form {
+  margin-top: 2vh;
+  text-align: center;
+}
+
+#home form input {
+  border: 1vw dashed #dfdfdf;
+  padding: 1vh 3vw;
+  font-family: inherit;
+  border-style: dashed;
+  width: 70%;
+  height: 100%;
+  font-size: 6vw;
+}
+
+#home form input:focus {
+  animation: pulse linear 3s infinite;
+  animation-direction: alternate;
+  border-style: solid;
+}
+
+#copyright {
+  font-weight: bold;
+  text-align: center;
+  margin-top: 15vh;
+  color: gray;
+  font-size: 5vw;
+  letter-spacing: 0.25vw;
+}
+
+@keyframes pulse {
+  0% {
+    border-color: #ffbdc8;
+  }
+  100% {
+    border-color: #afadff;
+  }
+}
