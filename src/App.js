@@ -8,11 +8,9 @@ import UserRegistration from "./comps/UserRegistration";
 import UserLogin from "./comps/UserLogin";
 import Editor from "./comps/Editor";
 import Home from "./comps/Home";
-import {Switch, Route, BrowserRouter as Router} from "react-router-dom";
+import {Switch, Route, BrowserRouter as Router, useParams, Redirect} from "react-router-dom";
 
-class App extends React.Component {
-  
-  headers = [
+const headers = [
               ["h1","Description"],
               ["h2","Role in the story"],
               ["div","<b>Dream</b> is the main antagonist of The Showrunners. He is a major character of <a href=\"/wiki/article/Book-3\">Books 3</a> and <a href=\"/wiki/article/Book-4\">4</a>."],
@@ -28,6 +26,35 @@ class App extends React.Component {
               ["h2","Book 3: Now in Color"],
               ["h2","Book 4: Teamwork vs. Dream's Work"]
             ];
+
+function getArticleName(upFunc, edit) {
+  var {name} = upFunc();
+  console.log(name);
+  const FrontBackRegex = /[^_*]\w+[^_*]/g;
+  console.log("1:" + name.match(FrontBackRegex)[0]);
+  if (name.includes(" ")) {
+    // Prevent possible double redirect
+    var underscoredName = name.replace(" ", "_").match(FrontBackRegex)[0];
+    return <Redirect to={"/wiki/article/" + underscoredName + (edit ? "/edit" : "")} />;
+  } else if (name !== name.match(FrontBackRegex)[0]) {
+    return <Redirect to={"/wiki/article/" + name.match(FrontBackRegex)[0] + (edit ? "/edit" : "")} />;
+  };
+  var displayName = name.replace("_", " ");
+  console.log(name);
+  return displayName;
+};
+
+function VerifyArticle() {
+  var displayName = getArticleName(useParams);
+  return <div><Helmet><title>Dream - The Showrunners Wiki</title></Helmet><Header wikiName="The Showrunners Wiki" /><Outline articleName={displayName} headers={headers} /><Article articleName={displayName} content={headers} /></div>
+};
+
+function VerifyEditor() {
+  var displayName = getArticleName(useParams, true);
+  return <div><Helmet><title>{"Editing" + displayName + " The Showrunners Wiki"}</title></Helmet><Editor articleName={displayName} content={headers} /></div>
+};
+
+class App extends React.Component {
   
   constructor(props) {
     super(props);
