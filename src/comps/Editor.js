@@ -9,9 +9,16 @@ class Editor extends React.Component {
   
   constructor(props) {
     super(props);
-    this.state = {
-      articleName: this.props.match.params.name
-    };
+    this.articleRef = React.createRef();
+    this.metadataRef = React.createRef();
+  };
+  
+  componentDidMount() {
+    setTimeout(() => this.articleRef.current.classList.toggle("visible"), 300);
+  };
+  
+  handleChange(e) {
+    
   };
   
   render() {
@@ -22,9 +29,9 @@ class Editor extends React.Component {
             <img src="/icons/checkmark.png" />
           </button>
         </header>
-        <article>
-          <div id="article-metadata" className="uneditable">
-            <h1 id="article-name">{this.state.articleName}</h1>
+        <article ref={this.articleRef}>
+          <div id="article-metadata" ref={this.metadataRef} className="uneditable">
+            <h1 id="article-name">{this.props.articleName}</h1>
             <div id="article-contributors">
               <div id="article-contributor-bubbles">
                 <span></span>
