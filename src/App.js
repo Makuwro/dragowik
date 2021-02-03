@@ -7,6 +7,7 @@ import Outline from "./comps/Outline";
 import UserRegistration from "./comps/UserRegistration";
 import UserLogin from "./comps/UserLogin";
 import Editor from "./comps/Editor";
+import Home from "./comps/Home";
 import {Switch, Route, BrowserRouter as Router} from "react-router-dom";
 
 class App extends React.Component {
@@ -76,6 +77,13 @@ class App extends React.Component {
               </Helmet>
               <Header wikiName="The Showrunners Wiki" />
               <UserLogin />
+            </Route>
+            
+            <Route exact path="/">
+              <Helmet>
+                <title>Welcome to The Showrunners Wiki</title>
+              </Helmet>
+              <Home />
             </Route>
           </Switch>
         </Router>
