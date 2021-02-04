@@ -13,7 +13,7 @@ import {Switch, Route, BrowserRouter as Router, useParams, Redirect} from "react
 const headers = [
               ["h1","Description"],
               ["h2","Role in the story"],
-              ["div","<b>Dream</b> is the main antagonist of The Showrunners. He is a major character of <a href=\"/wiki/article/Book-3\">Books 3</a> and <a href=\"/wiki/article/Book-4\">4</a>."],
+              ["div","<b>Dream</b> is the main antagonist of The Showrunners. He is a major character of <a href=\"/wiki/article/Book_3\">Books 3</a> and <a href=\"/wiki/article/Book_4\">4</a>."],
               ["h2","Physical description"],
               ["h3","Book 1: Trust and Safety"],
               ["h3","Book 2: The Worldender"],
