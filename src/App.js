@@ -10,7 +10,7 @@ import Editor from "./comps/Editor";
 import Home from "./comps/Home";
 import {Switch, Route, BrowserRouter as Router, useParams, Redirect} from "react-router-dom";
 
-const headers = [
+const headers = {"Dream":[
               ["h1","Description"],
               ["h2","Role in the story"],
               ["div","<b>Dream</b> is the main antagonist of The Showrunners. He is a major character of <a href=\"/wiki/article/Book_3\">Books 3</a> and <a href=\"/wiki/article/Book_4\">4</a>."],
@@ -25,7 +25,7 @@ const headers = [
               ["h2","Book 2: The Worldender"],
               ["h2","Book 3: Now in Color"],
               ["h2","Book 4: Teamwork vs. Dream's Work"]
-            ];
+]};
 
 function getArticleName(upFunc, edit) {
   var {name} = upFunc();
@@ -43,12 +43,12 @@ function getArticleName(upFunc, edit) {
 
 function VerifyArticle() {
   var displayName = getArticleName(useParams);
-  return <div><Helmet><title>Dream - The Showrunners Wiki</title></Helmet><Header wikiName="The Showrunners Wiki" /><Outline articleName={displayName} headers={headers} /><Article articleName={displayName} content={headers} /></div>
+  return <div><Helmet><title>{displayName + " - The Showrunners Wiki"}</title></Helmet><Header wikiName="The Showrunners Wiki" /><Outline exists={headers[displayName] ? true : false} articleName={displayName} headers={headers[displayName]} /><Article articleName={displayName} exists={headers[displayName] ? true : false} content={headers[displayName]} /></div>
 };
 
 function VerifyEditor() {
   var displayName = getArticleName(useParams, true);
-  return <div><Helmet><title>{"Editing" + displayName + " The Showrunners Wiki"}</title></Helmet><Editor articleName={displayName} content={headers} /></div>
+  return <div><Helmet><title>{"Editing " + displayName + " - The Showrunners Wiki"}</title></Helmet><Editor articleName={displayName} content={headers[displayName]} /></div>
 };
 
 class App extends React.Component {
