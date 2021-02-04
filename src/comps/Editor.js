@@ -45,7 +45,7 @@ class Editor extends React.Component {
           </div>
           <div id="article-content">{
             this.props.content.map((element) => {
-              return parse("<" + element[0] + ' contenteditable="true" onChange={this.handleChange} key={' + uuidv4() + '}>' + element[1] + "<" + element[0] + "/>")
+              return parse("<" + element[0] + '>' + element[1] + "</" + element[0] + ">", {
             })
           }</div>
         </article>

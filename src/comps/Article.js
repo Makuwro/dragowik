@@ -34,7 +34,7 @@ class Article extends React.Component {
         </div>
         <div id="article-content">{
           this.props.content.map((element) => {
-            return parse("<" + element[0] + " key={" + uuidv4() + ">" + element[1] + "<" + element[0] + "/>", {
+            return parse("<" + element[0] + " key={" + uuidv4() + ">" + element[1] + "</" + element[0] + ">", {
               replace: (domNode) => {
                 return domNode.children ? (domNode.name === "a" ? <Link to={domNode.attribs.href}>{domToReact(domNode.children)}</Link> : domNode) : undefined;
               }
