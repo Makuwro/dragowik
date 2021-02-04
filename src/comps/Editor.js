@@ -2,8 +2,8 @@ import React from "react";
 import "../styles/article.css";
 import "../styles/editor.css";
 import {withRouter} from "react-router-dom";
-import parse from "html-react-parser";
 import { v4 as uuidv4 } from "uuid";
+import parse, {domToReact} from "html-react-parser";
 
 class Editor extends React.Component {
   
@@ -46,6 +46,15 @@ class Editor extends React.Component {
           <div id="article-content">{
             this.props.content.map((element) => {
               return parse("<" + element[0] + '>' + element[1] + "</" + element[0] + ">", {
+                replace: ({children}) => {
+                  return React.createElement(element[0], {
+                    contentEditable: true,
+                    suppressContentEditableWarning: true,
+                    onChange: this.handleChange,
+                    key: uuidv4()
+                  }, domToReact(children));
+                }
+              })
             })
           }</div>
         </article>
