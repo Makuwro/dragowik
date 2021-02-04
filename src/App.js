@@ -87,6 +87,10 @@ class App extends React.Component {
                 <UserLogin />
               </Route>
               
+              <Route exact path={["/wiki", "/wiki/article"]}>
+                <Redirect to="/" />
+              </Route>
+              
               <Route exact path="/">
                 <Helmet>
                   <title>Welcome to The Showrunners Wiki</title>
