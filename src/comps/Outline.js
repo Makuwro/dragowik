@@ -7,6 +7,7 @@ class Outline extends React.Component {
   constructor(props) {
     super(props);
     this.navRef = React.createRef();
+    this.showButton = React.createRef();
   };
   
   toggleMenu() {
@@ -16,55 +17,59 @@ class Outline extends React.Component {
   };
   
   render() {
-    return (
-      <div id="outline">
-        <nav ref={this.navRef} className="nav-closed invisible">
-          <div id="no-img-header">
-            Outline
-          </div>
-          
-          <div id="nav-topic-name">
-            <div id="nav-topic-name-text">{this.props.articleName}</div>
-          </div>
-          
-          <div id="nav-outline">
-            <div id="nav-outline-header">
+    if (this.props.exists) {
+      return (
+        <div id="outline">
+          <nav ref={this.navRef} className="nav-closed invisible">
+            <div id="no-img-header">
               Outline
             </div>
             
-            <div id="nav-outline-list">
-              {this.props.headers.map((header) => {
-                return ["h1","h2","h3","h4","h5","h6"].find((e) => {
-                  return e === header[0]
-                }) ? React.createElement(header[0], {key: uuidv4()}, header[1]) : undefined;
-              })}
+            <div id="nav-topic-name">
+              <div id="nav-topic-name-text">{this.props.articleName}</div>
             </div>
-          </div>
-          
-          <div id="nav-close">
-            <button onClick={() => {
-              console.log("Close button pressed");
-              this.toggleMenu();
-            }}>
-              <svg>    
-                <image href="/svgs/cross.svg" width="100%" height="100%"/>    
-              </svg>
-              <div>
-                Close
+            
+            <div id="nav-outline">
+              <div id="nav-outline-header">
+                Outline
               </div>
-            </button>
-          </div>
-        </nav>
-        <button id="show-outline" onClick={() => {
-          console.log("Open button pressed");
-          this.toggleMenu();
-        }}>
-          <div>
-            Show outline
-          </div>
-        </button>
-      </div>
-    );
+              
+              <div id="nav-outline-list">
+                {this.props.headers.map((header) => {
+                  return ["h1","h2","h3","h4","h5","h6"].find((e) => {
+                    return e === header[0]
+                  }) ? React.createElement(header[0], {key: uuidv4()}, header[1]) : undefined;
+                })}
+              </div>
+            </div>
+            
+            <div id="nav-close">
+              <button onClick={() => {
+                console.log("Close button pressed");
+                this.toggleMenu();
+              }}>
+                <svg>    
+                  <image href="/svgs/cross.svg" width="100%" height="100%"/>    
+                </svg>
+                <div>
+                  Close
+                </div>
+              </button>
+            </div>
+          </nav>
+          <button id="show-outline" ref={this.showButton} onClick={() => {
+            console.log("Open button pressed");
+            this.toggleMenu();
+          }}>
+            <div>
+              Show outline
+            </div>
+          </button>
+        </div>
+      );
+    } else {
+      return (null);
+    };
   };
 };
 
