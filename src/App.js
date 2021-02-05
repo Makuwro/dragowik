@@ -10,22 +10,26 @@ import Editor from "./comps/Editor";
 import Home from "./comps/Home";
 import {Switch, Route, BrowserRouter as Router, useParams, Redirect} from "react-router-dom";
 
-const headers = {"Dream":[
-              ["h1","Description"],
-              ["h2","Role in the story"],
-              ["div","<b>Dream</b> is the main antagonist of The Showrunners. He is a major character of <a href=\"/wiki/article/Book_3\">Books 3</a> and <a href=\"/wiki/article/Book_4\">4</a>."],
-              ["h2","Physical description"],
-              ["h3","Book 1: Trust and Safety"],
-              ["h3","Book 2: The Worldender"],
-              ["h3","Book 3: Now in Color"],
-              ["h3","Book 4: Teamwork vs. Dream's Work"],
-              ["h1","Biography"],
-              ["h2","Before Book 1"],
-              ["h2","Book 1: Trust and Safety"],
-              ["h2","Book 2: The Worldender"],
-              ["h2","Book 3: Now in Color"],
-              ["h2","Book 4: Teamwork vs. Dream's Work"]
-]};
+const headers = {
+  "Dream": [
+    ["h1","Description"],
+    ["h2","Role in the story"],
+    ["div","<b>Dream</b> is the main antagonist of The Showrunners. He is a major character of <a href=\"/wiki/article/Book_3\">Books 3</a> and <a href=\"/wiki/article/Book_4\">4</a>."],
+    ["h2","Physical description"],
+    ["h3","Book 1: Trust and Safety"],
+    ["h3","Book 2: The Worldender"],
+    ["h3","Book 3: Now in Color"],
+    ["h3","Book 4: Teamwork vs. Dream's Work"],
+    ["h1","Biography"],
+    ["h2","Before Book 1"],
+    ["h2","Book 1: Trust and Safety"],
+    ["h2","Book 2: The Worldender"],
+    ["h2","Book 3: Now in Color"],
+    ["h2","Book 4: Teamwork vs. Dream's Work"]
+  ], "Lithicus": [
+    ["div","#REDIRECT [[Lithicus_Drakarox]]"]
+  ]
+};
 
 function getArticleName(upFunc, edit) {
   var {name} = upFunc();
