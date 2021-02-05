@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {Helmet, HelmetProvider} from "react-helmet-async";
 import "./styles/navigation.css";
 import Header from "./comps/Header";
@@ -10,29 +10,7 @@ import Editor from "./comps/Editor";
 import Home from "./comps/Home";
 import {Switch, Route, BrowserRouter as Router, useParams, Redirect} from "react-router-dom";
 
-const headers = {
-  "Dream": [
-    ["h1","Description"],
-    ["h2","Role in the story"],
-    ["div","<b>Dream</b> is the main antagonist of The Showrunners. He is a major character of <a href=\"/wiki/article/Book_3\">Books 3</a> and <a href=\"/wiki/article/Book_4\">4</a>."],
-    ["h2","Physical description"],
-    ["h3","Book 1: Trust and Safety"],
-    ["h3","Book 2: The Worldender"],
-    ["h3","Book 3: Now in Color"],
-    ["h3","Book 4: Teamwork vs. Dream's Work"],
-    ["h1","Biography"],
-    ["h2","Before Book 1"],
-    ["h2","Book 1: Trust and Safety"],
-    ["h2","Book 2: The Worldender"],
-    ["h2","Book 3: Now in Color"],
-    ["h2","Book 4: Teamwork vs. Dream's Work"]
-  ], "Lithicus": [
-    ["div","#REDIRECT [[Lithicus_Drakarox]]"]
-  ]
-};
-
-function getArticleName(upFunc, edit) {
-  var {name} = upFunc();
+function getArticleName(name, edit) {
   const FrontBackRegex = /[^_*]\w+[^_*]/g;
   if (name.includes(" ")) {
     // Prevent possible double redirect
@@ -44,69 +22,118 @@ function getArticleName(upFunc, edit) {
   var displayName = name.replace("_", " ");
   return displayName;
 };
-
-function VerifyArticle() {
-  var displayName = getArticleName(useParams);
-  return <div><Helmet><title>{displayName + " - The Showrunners Wiki"}</title></Helmet><Header wikiName="The Showrunners Wiki" /><Outline exists={headers[displayName] ? true : false} articleName={displayName} headers={headers[displayName]} /><Article articleName={displayName} exists={headers[displayName] ? true : false} content={headers[displayName]} /></div>
-};
-
+/*
 function VerifyEditor() {
   var displayName = getArticleName(useParams, true);
   return <div><Helmet><title>{"Editing " + displayName + " - The Showrunners Wiki"}</title></Helmet><Editor articleName={displayName} content={headers[displayName]} /></div>
 };
+*/
+function App() {
+  
+  const [article, setArticle] = useState(null);
+  const [articleMode, setArticleMode] = useState(null);
+  const [articleName, setArticleName] = useState(null);
+  
+  function VerifyArticle() {
+    const {name} = useParams();
+    
+    
+    useEffect(() => {
+      setArticleName(name);
+      setArticleMode("view");
+    });
+    
+    return "";
+  };
+  
+  useEffect(() => {
+    async function updateArticle() {
+      
+      if (articleMode) {
+        var name = articleName;
+        var displayName = getArticleName(name);
+        
+        if (typeof(displayName) !== "string") return displayName;
+        
+        var articleInfo;
+        
+        try {
+          const Response = await fetch("/api/article/" + name);
+          const JSONResponse = await Response.json();
+          
+          if (!Response.ok) {
+            switch (Response.status) {
+              
+              case 404: 
+                throw new Error("Article doesn't exist");
+                
+              default:
+                throw new Error("Unknown error");
+              
+            };
+          };
+          
+          articleInfo = JSONResponse;
+        } catch (err) {
+          console.warn("Couldn't get article data for " + name + ": " + err);
+        };
+   
+        
+        setArticle(<div><Helmet><title>{displayName + " - The Showrunners Wiki"}</title></Helmet><Header wikiName="The Showrunners Wiki" /><Outline exists={articleInfo ? true : false} articleName={displayName} headers={articleInfo ? JSON.parse(articleInfo.source) : undefined} /><Article articleName={displayName} exists={articleInfo ? true : false} content={articleInfo ? JSON.parse(articleInfo.source) : undefined} /></div>);
 
-class App extends React.Component {
+      };
+    };
+    
+    updateArticle();
+  }, [articleName, articleMode]);
   
-  constructor(props) {
-    super(props);
-  };
+  return (
+    <HelmetProvider>
+      <div id="app">
+        <Router>
+          <Switch>
+            <Route exact path="/wiki/article/:name/edit">
+            {
+              // VerifyEditor
+            }
+            </Route>
+            
+            <Route exact path="/wiki/article/:name">
+              <VerifyArticle />{article}
+            </Route>
+            
+            <Route exact path="/wiki/register">
+              <Helmet>
+                <title>Sign up to contribute to The Showrunners Wiki</title>
+              </Helmet>
+              <Header wikiName="The Showrunners Wiki" />
+              <UserRegistration />
+            </Route>
+            
+            <Route exact path="/wiki/login">
+              <Helmet>
+                <title>Welcome back to The Showrunners Wiki</title>
+              </Helmet>
+              <Header wikiName="The Showrunners Wiki" />
+              <UserLogin />
+            </Route>
+            
+            <Route exact path={["/wiki", "/wiki/article"]}>
+              <Redirect to="/" />
+            </Route>
+            
+            <Route exact path="/">
+              <Helmet>
+                <title>Welcome to The Showrunners Wiki</title>
+              </Helmet>
+              <Home />
+            </Route>
+          </Switch>
+        </Router>
+      </div>
+    </HelmetProvider>
+  );
   
-  render() {
-    return (
-      <HelmetProvider>
-        <div id="app">
-          <Router>
-            <Switch>
-              <Route exact path="/wiki/article/:name/edit">
-                <VerifyEditor />
-              </Route>
-              
-              <Route exact path="/wiki/article/:name">
-                <VerifyArticle />
-              </Route>
-              
-              <Route exact path="/wiki/register">
-                <Helmet>
-                  <title>Sign up to contribute to The Showrunners Wiki</title>
-                </Helmet>
-                <Header wikiName="The Showrunners Wiki" />
-                <UserRegistration />
-              </Route>
-              
-              <Route exact path="/wiki/login">
-                <Helmet>
-                  <title>Welcome back to The Showrunners Wiki</title>
-                </Helmet>
-                <Header wikiName="The Showrunners Wiki" />
-                <UserLogin />
-              </Route>
-              
-              <Route exact path={["/wiki", "/wiki/article"]}>
-                <Redirect to="/" />
-              </Route>
-              
-              <Route exact path="/">
-                <Helmet>
-                  <title>Welcome to The Showrunners Wiki</title>
-                </Helmet>
-                <Home />
-              </Route>
-            </Switch>
-          </Router>
-        </div>
-      </HelmetProvider>
-    );
-  };
 };
 
 export default App;
