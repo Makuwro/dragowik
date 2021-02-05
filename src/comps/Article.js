@@ -15,6 +15,8 @@ class Article extends React.Component {
     this.metadataRef = React.createRef();
     this.vanishArticle = this.vanishArticle.bind(this);
     this.redirectArticle = this.redirectArticle.bind(this);
+    this.checkArticleLinks = this.checkArticleLinks.bind(this);
+    
     var firstElement = this.props.content ? this.props.content[0] : undefined;
     var redirectArticleName;
     if (firstElement) {
@@ -23,22 +25,18 @@ class Article extends React.Component {
         redirectArticleName = redirectArticle ? redirectArticle[1] : undefined;
       };
     };
+    
     this.state = {
       redirectArticleName: redirectArticleName,
+      nonExistentArticles: {}
     }
   };
   
-  componentDidMount() {
-    /*
-    // This makes the page flash on back button
-    const {history} = this.props;
-    window.onpopstate = (event) => {
-      event.preventDefault();
-      if (this.articleRef.current.classList.contains("visible")) {
-        this.articleRef.current.classList.remove("visible");
-      };
-    };*/ 
-    setTimeout(() => this.articleRef.current.classList.add("visible"), 300);
+  async componentDidMount() {
+    this.checkArticleLinks();
+    if (!this.state.redirectArticleName) { 
+      setTimeout(() => this.articleRef.current.classList.add("visible"), 300);
+    };
   };
   
   componentDidUpdate() {
@@ -67,6 +65,59 @@ class Article extends React.Component {
       pathname: "/wiki/article/" + this.state.redirectArticleName,
       redirectedFrom: this.props.articleName
     }} />
+  };
+  
+  checkArticleLinks() {
+    // Make sure we got something to work with
+    if (!this.props.content) return;
+    
+    async function articleExists(possibleName) {
+      console.log("Checking if " + possibleName + " exists...");
+      const ArticleNameArray = [...possibleName.matchAll(ArticleNameRegex)][0];
+      const ArticleName = ArticleNameArray ? ArticleNameArray[1] : undefined;
+      
+      if (!ArticleName) return false;
+      
+      // Now let's check with the server
+      var articleExists = false;
+      try {
+        const Response = await fetch("/api/article/" + ArticleName);
+        if (Response.ok) {
+          articleExists = true;
+        };
+      } catch (err) {
+        console.warn("Couldn't verify that " + ArticleName + " exists. Assuming it doesn't exist.");
+      };
+      
+      return articleExists;
+    }
+    
+    this.props.content.map(async element => {
+      var elementChildren = parse("<" + element[0] + " key={" + uuidv4() + ">" + element[1] + "</" + element[0] + ">").props.children;
+      var childrenObjects = typeof(elementChildren) === "object" ? elementChildren.filter(child => { return typeof(child) === "object" }) : undefined;
+      if (!childrenObjects) return;
+      
+      for (var i = 0; childrenObjects.length > i; i++) {
+        
+        // Only get links
+        if (childrenObjects[i].type !== "a") continue;
+        
+        // Let's verify them
+        var articleLocation = childrenObjects[i].props.href;
+        var blueLink = await articleExists(articleLocation);
+        if (!blueLink) {
+          
+          // Let's make
+          var newNEAs = this.state.nonExistentArticles;
+          newNEAs[articleLocation] = true;
+          this.setState({
+            nonExistentArticles: newNEAs
+          });
+          
+        };
+        
+      };
+    });
   };
   
   render() {

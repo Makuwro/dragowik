@@ -67,3 +67,7 @@ h1#article-name {
 #article-content:focus, #article-content h1:focus, #article-content h2:focus, #article-content h3:focus, #article-content div:focus {
   outline: none;
 }
+
+.article-link-invalid {
+  color: #e95b5b !important;
+}
