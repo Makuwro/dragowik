@@ -116,7 +116,7 @@ function App() {
                     "Editing the source of " + displayName + " - The Showrunners Wiki"
                   }</title>
                 </Helmet>
-                <SourceEditor articleName={displayName} source={articleInfo ? articleInfo.source : undefined} />
+                <SourceEditor articleName={displayName} specialName={name} source={articleInfo ? articleInfo.source : undefined} />
               </div>
             );
             
