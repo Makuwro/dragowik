@@ -2,6 +2,9 @@
 
 A simple React.js wiki in the works!
 
+## How do I set it up?
+Instructions are coming soon.
+
 ## Main features
 - Smooth article viewer
 - Collaborative article editor
