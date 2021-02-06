@@ -5,7 +5,10 @@ import parse, {domToReact} from "html-react-parser";
 import { v4 as uuidv4 } from "uuid";
 
 const RedirectRegex = /#REDIRECT \[\[(\w+)\]\]/g;
-const ArticleNameRegex = /\/wiki\/article\/(\w+)/g
+const ArticleNameRegex = /\/wiki\/article\/(\w+)/g;
+const WikiMarkupRegex = /(# (?<h1>.+))|(## (?<h2>.+))|(### (?<h3>.+))|(?<element><(\w+?)( (?<elementAttribs>\w+=".+?|")|)>(?<elementText>.+?)<\/\w+?>)|(\[\[(?<aBracket>.+?)\]\])|(\*\*(?<bAsterisk>(.+))\*\*)|\n+?(?<newLine>[^#]+)/gm;
+const NewLineRegex = /\n+?/gm
+
 
 class Article extends React.Component {
   
@@ -91,8 +94,11 @@ class Article extends React.Component {
       
       return articleExists;
     }
-    
-    this.props.content.map(async element => {
+    /*
+    this.props.source.map(async element => {
+      
+      console.log("hey");
+      
       var elementChildren = parse("<" + element[0] + " key={" + uuidv4() + ">" + element[1] + "</" + element[0] + ">").props.children;
       var childrenObjects = typeof(elementChildren) === "object" ? elementChildren.filter(child => { return typeof(child) === "object" }) : undefined;
       if (!childrenObjects) return;
@@ -117,7 +123,74 @@ class Article extends React.Component {
         };
         
       };
-    });
+    }); */
+  };
+  
+  generateMarkup() {
+    
+    const Matches = [...this.props.source.matchAll(WikiMarkupRegex)];
+    
+    var newSource = this.props.source;
+    for (var i = 0; Matches.length > i; i++) {
+      const Match = Object.keys(Matches[i].groups).filter((key) => {
+        return Matches[i].groups[key];
+      });
+      
+      switch (Match[0]) {
+        
+        case "h1":
+        case "h2":
+        case "h3":
+        case "bAsterisk":
+        case "newLine":
+          var text = Matches[i].groups[Match[0]];
+          
+          // Make sure that the paragraph isn't a header
+          if (Match[0] === "newLine") {
+            const ChildMatches = [...text.matchAll(WikiMarkupRegex)];
+            
+            for (var x = 0; ChildMatches.length > x; x++) {
+              const ChildMatch = Object.keys(ChildMatches[x].groups).filter((key) => {
+                return ChildMatches[x].groups[key];
+              });
+              
+              switch (ChildMatch[0]) {
+                
+                case "bAsterisk":
+                  const ChildText = ChildMatches[x].groups[ChildMatch[0]];
+                  const ElementName = ChildMatch[0] === "bAsterisk" ? "b" : (
+                    ChildMatch[0] === "aBracket" ? "a" : undefined
+                  );
+                  text = text.replace(ChildMatches[x][0], "<" + ElementName + ">" + ChildText + "</" + ElementName + ">");
+                  break;
+                  
+                default:
+                  break;
+                
+              };
+              
+            };
+            
+          };
+          
+          newSource = newSource.replace(
+            Matches[i][0], 
+            "<" + (Match[0] === "bAsterisk" ? "b" : 
+            (Match[0] === "newLine" ? "div" : Match[0])) + ">" + 
+            text + 
+            "</" + (Match[0] === "bAsterisk" ? "b" : 
+            (Match[0] === "newLine" ? "div" : Match[0])) + ">");
+            
+          break;
+        
+        default:
+          break;
+        
+      };
+      
+    };
+    
+    return newSource;
   };
   
   render() {
@@ -140,19 +213,16 @@ class Article extends React.Component {
             </div>
           </div>
           <div id="article-content">{
-            this.props.exists ? this.props.content.map((element) => {
-              
-              return parse("<" + element[0] + " key={" + uuidv4() + ">" + element[1] + "</" + element[0] + ">", {
-                replace: (domNode) => {
-                  if (domNode.children) {
-                    if (domNode.name === "a") {
-                      var articleExists = this.state.nonExistentArticles[domNode.attribs.href] ? false : true; // returns unresolved promise
-                      return <a onClick={this.vanishArticle} href={domNode.attribs.href} title={!articleExists ? "This article doesn't exist! Why don't we change that?" : "oops"} className={!articleExists ? "article-link-invalid" : undefined}>{domToReact(domNode.children)}</a>;
-                    };
-                    return domNode;
+            this.props.exists ? parse(this.generateMarkup(), {
+              replace: (domNode) => {
+                if (domNode.children) {
+                  if (domNode.name === "a") {
+                    var articleExists = this.state.nonExistentArticles[domNode.attribs.href] ? false : true; // returns unresolved promise
+                    return <a onClick={this.vanishArticle} href={domNode.attribs.href} title={!articleExists ? "This article doesn't exist! Why don't we change that?" : undefined} className={!articleExists ? "article-link-invalid" : undefined}>{domToReact(domNode.children)}</a>;
                   };
-                }
-              })
+                  return domNode;
+                };
+              }
             }) : <div>This article doesn't exist!</div>
           }</div>
         </article>
