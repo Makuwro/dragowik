@@ -1,0 +1,14 @@
+#editor-source-form {
+  margin-top: 3vh;
+}
+
+#editor-source-textarea {
+  width: 80vw;
+  resize: none;
+  display: block;
+  margin: auto;
+  border: 1vw dashed gray;
+  height: 50vh;
+  padding: 5vw;
+  font-size: 4vw;
+}
