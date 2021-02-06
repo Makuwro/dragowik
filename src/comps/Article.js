@@ -208,9 +208,11 @@ class Article extends React.Component {
                 <span></span>
                 <span></span>
               </div>
-              <span id="article-contributors-amount">0 contributors</span>
-              <span id="article-contribs-divider">•</span>
-              <span id="article-update-time">Just updated</span>
+              <div id="article-contribs-text">
+                <span id="article-contributors-amount">0 contributors</span>
+                <span id="article-contribs-divider">•</span>
+                <span id="article-update-time">Just updated</span>
+              </div>
             </div>
           </div>
           <div id="article-content">{

@@ -13,14 +13,14 @@ class Outline extends React.Component {
   toggleMenu() {
     const navRef = this.navRef.current;
     navRef.classList.toggle("nav-closed");
-    navRef.classList.toggle("invisible");
+    navRef.classList.toggle("outline-invisible");
   };
   
   render() {
     if (this.props.exists) {
       return (
         <div id="outline">
-          <nav ref={this.navRef} className="nav-closed invisible">
+          <nav ref={this.navRef} className="nav-closed outline-invisible">
             <div id="no-img-header">
               Outline
             </div>

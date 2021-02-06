@@ -21,7 +21,7 @@ nav {
   transition: opacity 0.15s, height 0.2s, width 0.2s, left 0.2s, top 0.2s;
 }
 
-.invisible {
+.outline-invisible {
   opacity: 0;
 }
 
@@ -155,4 +155,46 @@ nav {
   display: flex;
   align-items: center;
   color: #4d5987;
+}
+
+@media screen and (min-width: 1024px) {
+  nav {
+    background: none;
+  }
+  
+  #show-outline, #nav-close {
+    display: none;
+  }
+  
+  .outline-invisible {
+    opacity: 1;
+  }
+  
+  .nav-closed {
+    height: 93vh;
+    left: 0;
+    top: 7vh;
+    width: 20vw;
+    transition: none;
+  }
+  
+  #no-img-header {
+    color: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10%;
+    font-size: 2vw;
+    letter-spacing: 0.1vw;
+    border-right: 0.3vw solid rgb(122, 145, 230);
+  }
+  
+  #nav-topic-name {
+    margin-top: 10%;
+  }
+  
+  #nav-topic-name-text {
+    font-size: 1.25vw;
+    letter-spacing: 0.1vw;
+  }
 }

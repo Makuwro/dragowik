@@ -9,9 +9,9 @@ article {
   opacity: 1;
 }
 
-h1#article-name {
+#article-name {
   margin: 0;
-  font-size: 10vw;
+  font-size: 14vw;
 }
 
 #article-contributors {
@@ -19,17 +19,17 @@ h1#article-name {
   color: #595d6b;
 }
 
-#article-contributor-bubbles {
-  height: 5vh;
-}
-
 #article-contributor-bubbles span {
   width: 1.5rem;
   height: 1.5rem;
-  margin-right: 2vw;
+  margin-right: 0.75rem;
   background-color: #595d6b;
   border-radius: 100%;
   display: inline-block;
+}
+
+#article-contribs-text {
+  margin-top: 1vh;
 }
 
 #article-contribs-divider {
@@ -42,6 +42,7 @@ h1#article-name {
   line-height: 4vh;
   font-size: 5vw;
   margin-bottom: 18vh;
+  overflow-wrap: anywhere;
 }
 
 #article-content div {
@@ -50,12 +51,12 @@ h1#article-name {
 
 #article-content h1 {
   font-size: 8vw;
-  margin: 3vh 0;
+  margin: 2.5vh 0;
 }
 
 #article-content h2 {
   font-size: 6.5vw;
-  margin: 3vh 0;
+  margin: 2.5vh 0;
 }
 
 #article-content a {
@@ -64,10 +65,116 @@ h1#article-name {
   font-weight: bold;
 }
 
+#article-redirect-notif {
+  margin-top: 1vh;
+  margin-bottom: 2vh;
+}
+
 #article-content:focus, #article-content h1:focus, #article-content h2:focus, #article-content h3:focus, #article-content div:focus {
   outline: none;
 }
 
 .article-link-invalid {
   color: #e95b5b !important;
+}
+
+/* Responsive stuff */
+@media screen and (min-width: 375px) {
+  
+  #article-content {
+    line-height: 5vh;
+  }
+  
+  #article-content h1 {
+    margin: 3vh 0;
+  }
+  
+  #article-content h2 {
+    margin: 3vh 0;
+  }
+  
+}
+
+@media screen and (min-width: 425px) {
+  
+  #article-contributors {
+    display: flex;
+    align-items: center;
+  }
+  
+  #article-contribs-text {
+    font-size: 4vw;
+    margin-top: 0;
+    margin-left: 2vw;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  
+  #article-name {
+    font-size: 10vw;
+  }
+  
+  #article-content {
+    font-size: 3vw;
+    line-height: 6vw;
+  }
+  
+  #article-content h1 {
+    margin: 2vh 0;
+    font-size: 5vw;
+  }
+  
+  #article-content h2 {
+    margin: 2vh 0;
+    font-size: 4vw;
+  }
+  
+  #article-contributor-bubbles span {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+  
+}
+
+@media screen and (min-width: 1024px) {
+  
+  #article-container {
+    width: 70vw;
+    float: right;
+  }
+  
+  #article-name {
+    font-size: 4rem;
+  }
+  
+  #article-contributor-bubbles span {
+    height: 1.5rem;
+    width: 1.5rem;
+  }
+  
+  #article-contribs-text {
+    font-size: 1rem;
+    margin-left: 0;
+  }
+  
+  #article-contribs-divider {
+    margin: 0 0.5rem;
+  }
+  
+  #article-content {
+    font-size: 1rem;
+    line-height: 2rem;
+  }
+  
+  #article-content h1 {
+    font-size: 2rem;
+    margin: 1rem 0;
+  }
+  
+  #article-content h2 {
+    font-size: 1.3rem;
+    margin: 1rem 0;
+  }
+  
 }
