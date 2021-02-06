@@ -1,6 +1,6 @@
 import React from "react";
 import "../styles/article.css";
-import {withRouter, Redirect} from "react-router-dom";
+import {withRouter, Redirect, Link} from "react-router-dom";
 import parse, {domToReact} from "html-react-parser";
 import { v4 as uuidv4 } from "uuid";
 
@@ -224,7 +224,7 @@ class Article extends React.Component {
                   return domNode;
                 };
               }
-            }) : <div>This article doesn't exist!</div>
+            }) : <div>This article doesn't exist. Why not <Link to={"/wiki/article/" + this.props.specialName + "/edit?mode=source"}>create it</Link>?</div>
           }</div>
         </article>
       );
