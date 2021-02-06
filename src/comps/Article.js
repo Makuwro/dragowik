@@ -20,13 +20,11 @@ class Article extends React.Component {
     this.redirectArticle = this.redirectArticle.bind(this);
     this.checkArticleLinks = this.checkArticleLinks.bind(this);
     
-    var firstElement = this.props.content ? this.props.content[0] : undefined;
     var redirectArticleName;
-    if (firstElement) {
-      if (firstElement[0] === "div") {
-        var redirectArticle = [...firstElement[1].matchAll(RedirectRegex)][0];
-        redirectArticleName = redirectArticle ? redirectArticle[1] : undefined;
-      };
+    var source = this.props.redirect ? props.source : false;
+    if (source) {
+      var redirectArticle = [...source.matchAll(RedirectRegex)][0];
+      redirectArticleName = redirectArticle ? redirectArticle[1] : undefined;
     };
     
     this.state = {
@@ -49,7 +47,9 @@ class Article extends React.Component {
     
     if (!this.state.redirectArticleName) {
       setTimeout(() => {
-        this.articleRef.current.classList.add("visible");
+        if (this.articleRef.current) {
+          this.articleRef.current.classList.add("visible");
+        };
       }, 300);
     };
   };
@@ -198,9 +198,10 @@ class Article extends React.Component {
       return (this.redirectArticle());
     } else {
       return (
-        <article ref={this.articleRef}>
+        <article id="article-container" ref={this.articleRef}>
           <div id="article-metadata" ref={this.metadataRef}>
             <h1 id="article-name">{this.props.articleName}</h1>
+            {this.props.location.redirectedFrom ? <div id="article-redirect-notif">Redirected from <Link to={this.props.location.redirectedFrom + "?redirect=no"}>{this.props.location.redirectedFrom}</Link></div> : undefined}
             <div id="article-contributors">
               <div id="article-contributor-bubbles">
                 <span></span>

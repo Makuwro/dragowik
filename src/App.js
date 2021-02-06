@@ -42,15 +42,19 @@ function App() {
   const [articleMode, setArticleMode] = useState(null);
   const [articleName, setArticleName] = useState(null);
   const [location, setLocation] = useState(null);
+  const [redirect, setRedirect] = useState(null);
   
   function VerifyArticle(props) {
     const {name} = useParams();
     const location = useLocation();
-    const Mode = props.editMode ? new URLSearchParams(location.search).get("mode") : undefined;
+    const Query = new URLSearchParams(location.search);
+    const Mode = props.editMode ? Query.get("mode") : undefined;
+    const Redirect = Query.get("redirect") === "no" ? false : true;
     
     useEffect(() => {
       setArticleName(name);
       setArticleMode(props.editMode ? (Mode && Mode.toLowerCase() === "source" ? Mode : "visual") : "view");
+      setRedirect(Redirect);
     });
     
     return "";
@@ -104,7 +108,7 @@ function App() {
                 </Helmet>
                 <Header wikiName="The Showrunners Wiki" />
                 <Outline exists={articleInfo ? true : false} articleName={displayName} headers={articleInfo ? articleInfo.source : undefined} />
-                <Article articleName={displayName} exists={articleInfo ? true : false} source={articleInfo ? articleInfo.source : undefined} />
+                <Article articleName={displayName} redirect={redirect} specialName={name} exists={articleInfo ? true : false} source={articleInfo ? articleInfo.source : undefined} />
               </div>
             );
           
