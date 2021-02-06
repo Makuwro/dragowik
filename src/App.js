@@ -64,7 +64,10 @@ function App() {
         var name = articleName;
         var displayName = getArticleName(name);
         
-        if (typeof(displayName) !== "string") return displayName;
+        if (typeof(displayName) !== "string") {
+          setArticle(displayName);
+          return;
+        };
         
         var articleInfo;
         
