@@ -36,7 +36,7 @@ class SourceEditor extends React.Component {
     try {
       
       response = await fetch("/api/article/" + this.props.specialName, {
-        method: "PUT",
+        method: this.props.source ? "PUT" : "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({
           source: this.state.source
@@ -48,6 +48,7 @@ class SourceEditor extends React.Component {
       };
       
       console.log("Updated article!");
+      this.props.history.push("/wiki/article/" + this.props.specialName);
       
     } catch (err) {
       console.warn("Couldn't update article: " + err);
