@@ -54,9 +54,7 @@ class UserLogin extends React.Component {
     
     e.preventDefault();
     
-    if (this.serverProcessing) {
-      return;
-    };
+    if (this.serverProcessing) return;
     
     this.setServerProcessing(true);
     
