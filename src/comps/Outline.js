@@ -34,7 +34,11 @@ class Outline extends React.Component {
                 Outline
               </div>
               
-              <div id="nav-outline-list">{this.props.source}</div>
+              <div id="nav-outline-list">{this.props.headers ? this.props.headers.map(headerId => 
+                React.createElement(headerId.tagName.toLowerCase(), {
+                  key: uuidv4()
+                }, headerId.textContent)
+              ) : undefined}</div>
             </div>
             
             <div id="nav-close">

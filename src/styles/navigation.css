@@ -162,6 +162,11 @@ nav {
     background: none;
   }
   
+  #nav-outline-list {
+    color: black;
+    font-size: 1vw;
+  }
+  
   #show-outline, #nav-close {
     display: none;
   }
@@ -196,5 +201,25 @@ nav {
   #nav-topic-name-text {
     font-size: 1.25vw;
     letter-spacing: 0.1vw;
+  }
+  
+  #nav-outline-list {
+    overflow-x: hidden;
+  }
+  
+  #nav-outline-list h1, #nav-outline-list h2, #nav-outline-list h3 {
+    padding-right: 1vw;
+  }
+  
+  #nav-outline-list h1 {
+    font-size: 1.5vw;
+  }
+  
+  #nav-outline-list h2 {
+    font-size: 1.25vw;
+  }
+  
+  #nav-outline-list h3 {
+    font-size: 1vw;
   }
 }

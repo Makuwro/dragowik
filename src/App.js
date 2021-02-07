@@ -9,7 +9,6 @@ import "./styles/navigation.css";
 // Makuwki components
 import Header from "./comps/Header";
 import Article from "./comps/Article";
-import Outline from "./comps/Outline";
 import UserRegistration from "./comps/UserRegistration";
 import UserLogin from "./comps/UserLogin";
 import SourceEditor from "./comps/SourceEditor";
@@ -107,7 +106,6 @@ function App() {
                   }</title>
                 </Helmet>
                 <Header wikiName="The Showrunners Wiki" />
-                <Outline exists={articleInfo ? true : false} articleName={displayName} headers={articleInfo ? articleInfo.source : undefined} />
                 <Article articleName={displayName} redirect={redirect} specialName={name} exists={articleInfo ? true : false} source={articleInfo ? articleInfo.source : undefined} />
               </div>
             );

@@ -2,13 +2,15 @@ import React from "react";
 import "../styles/article.css";
 import {withRouter, Redirect, Link} from "react-router-dom";
 import parse, {domToReact} from "html-react-parser";
-import { v4 as uuidv4 } from "uuid";
+import Outline from "./Outline";
 
 const RedirectRegex = /#REDIRECT \[\[(\w+)\]\]/g;
 const ArticleNameRegex = /\/wiki\/article\/(\w+)/g;
 const WikiMarkupRegex = /(# (?<h1>.+))|(## (?<h2>.+))|(### (?<h3>.+))|(?<element><(\w+?)( (?<elementAttribs>\w+=".+?|")|)>(?<elementText>.+?)<\/\w+?>)|(\[\[(?<aBracket>.+?)\]\])|(\*\*(?<bAsterisk>(.+))\*\*)|\n+?(?<newLine>[^#]+)/gm;
-const NewLineRegex = /\n+?/gm
 
+function isHeader(tag) {
+  return typeof({"h1": true, "h2": true, "h3": true}[tag]) === "boolean";
+};
 
 class Article extends React.Component {
   
@@ -16,6 +18,7 @@ class Article extends React.Component {
     super(props);
     this.articleRef = React.createRef();
     this.metadataRef = React.createRef();
+    this.headerRefs = [];
     this.vanishArticle = this.vanishArticle.bind(this);
     this.redirectArticle = this.redirectArticle.bind(this);
     this.checkArticleLinks = this.checkArticleLinks.bind(this);
@@ -27,15 +30,38 @@ class Article extends React.Component {
       redirectArticleName = redirectArticle ? redirectArticle[1] : undefined;
     };
     
+    var {headers, content} = this.generateMarkup();
+    
+    content = parse(content, {
+      replace: (domNode) => {
+        if (isHeader(domNode.name)) {
+          return React.createElement(domNode.name, {
+            ref: ref => {
+              this.headerRefs.push(ref);
+              this.setState({headers: this.headerRefs})
+            }
+          }, domToReact(domNode.children));
+        } else if (domNode.children) {
+          if (domNode.name === "a") {
+            var articleExists = this.state.nonExistentArticles[domNode.attribs.href] ? false : true; // returns unresolved promise
+            return <a onClick={this.vanishArticle} href={domNode.attribs.href} title={!articleExists ? "This article doesn't exist! Why don't we change that?" : undefined} className={!articleExists ? "article-link-invalid" : undefined}>{domToReact(domNode.children)}</a>;
+          };
+          return domNode;
+        };
+      }
+    });
+    
     this.state = {
       redirectArticleName: redirectArticleName,
-      nonExistentArticles: {}
-    }
+      nonExistentArticles: {},
+      content: content
+    };
+    
   };
   
   async componentDidMount() {
     this.checkArticleLinks();
-    if (!this.state.redirectArticleName) { 
+    if (!this.state.redirectArticleName && this.articleRef.current) { 
       setTimeout(() => this.articleRef.current.classList.add("visible"), 300);
     };
   };
@@ -129,8 +155,9 @@ class Article extends React.Component {
   generateMarkup() {
     
     const Matches = [...this.props.source.matchAll(WikiMarkupRegex)];
-    
     var newSource = this.props.source;
+    var headerIds = {};
+    
     for (var i = 0; Matches.length > i; i++) {
       const Match = Object.keys(Matches[i].groups).filter((key) => {
         return Matches[i].groups[key];
@@ -173,14 +200,35 @@ class Article extends React.Component {
             
           };
           
+          var possibleReplacement = isHeader(Match[0]) ? text.replaceAll(/[^a-zA-Z0-9 ]/g, "", "").replaceAll(" ", "_") : undefined;
+          var headerId = possibleReplacement;
+          if (possibleReplacement) {
+            var x = 0;
+            while (!headerId) {
+              if (x === 0 && !headerIds[headerId]) {
+                break;
+              };
+              
+              headerId = headerIds[possibleReplacement + "_" + x];
+              
+              if (headerIds[headerId]) {
+                headerId = undefined;
+                x++;
+              };
+            };
+            headerIds[headerId] = true;
+          };
+          
           newSource = newSource.replace(
             Matches[i][0], 
             "<" + (Match[0] === "bAsterisk" ? "b" : 
-            (Match[0] === "newLine" ? "div" : Match[0])) + ">" + 
+            (Match[0] === "newLine" ? "div" : Match[0])) +
+            (headerId ? " id=" + headerId : "") +
+            ">" + 
             text + 
             "</" + (Match[0] === "bAsterisk" ? "b" : 
             (Match[0] === "newLine" ? "div" : Match[0])) + ">");
-            
+          
           break;
         
         default:
@@ -189,8 +237,8 @@ class Article extends React.Component {
       };
       
     };
-    
-    return newSource;
+  
+    return {content: newSource, headers: Object.keys(headerIds)};
   };
   
   render() {
@@ -198,37 +246,30 @@ class Article extends React.Component {
       return (this.redirectArticle());
     } else {
       return (
-        <article id="article-container" ref={this.articleRef}>
-          <div id="article-metadata" ref={this.metadataRef}>
-            <h1 id="article-name">{this.props.articleName}</h1>
-            {this.props.location.redirectedFrom ? <div id="article-redirect-notif">Redirected from <Link to={this.props.location.redirectedFrom + "?redirect=no"}>{this.props.location.redirectedFrom}</Link></div> : undefined}
-            <div id="article-contributors">
-              <div id="article-contributor-bubbles">
-                <span></span>
-                <span></span>
-                <span></span>
-              </div>
-              <div id="article-contribs-text">
-                <span id="article-contributors-amount">0 contributors</span>
-                <span id="article-contribs-divider">•</span>
-                <span id="article-update-time">Just updated</span>
+        <div>
+          <Outline exists={this.props.exists} articleName={this.props.articleName} headers={this.state.headers} />
+          <article id="article-container" ref={this.articleRef}>
+            <div id="article-metadata" ref={this.metadataRef}>
+              <h1 id="article-name">{this.props.articleName}</h1>
+              {this.props.location.redirectedFrom ? <div id="article-redirect-notif">Redirected from <Link to={this.props.location.redirectedFrom + "?redirect=no"}>{this.props.location.redirectedFrom}</Link></div> : undefined}
+              <div id="article-contributors">
+                <div id="article-contributor-bubbles">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+                <div id="article-contribs-text">
+                  <span id="article-contributors-amount">0 contributors</span>
+                  <span id="article-contribs-divider">•</span>
+                  <span id="article-update-time">Just updated</span>
+                </div>
               </div>
             </div>
-          </div>
-          <div id="article-content">{
-            this.props.exists ? parse(this.generateMarkup(), {
-              replace: (domNode) => {
-                if (domNode.children) {
-                  if (domNode.name === "a") {
-                    var articleExists = this.state.nonExistentArticles[domNode.attribs.href] ? false : true; // returns unresolved promise
-                    return <a onClick={this.vanishArticle} href={domNode.attribs.href} title={!articleExists ? "This article doesn't exist! Why don't we change that?" : undefined} className={!articleExists ? "article-link-invalid" : undefined}>{domToReact(domNode.children)}</a>;
-                  };
-                  return domNode;
-                };
-              }
-            }) : <div>This article doesn't exist. Why not <Link to={"/wiki/article/" + this.props.specialName + "/edit?mode=source"}>create it</Link>?</div>
-          }</div>
-        </article>
+            <div id="article-content">{
+              this.props.exists ? this.state.content : <div>This article doesn't exist. Why not <Link to={"/wiki/article/" + this.props.specialName + "/edit?mode=source"}>create it</Link>?</div>
+            }</div>
+          </article>
+        </div>
       );
     }
   };
