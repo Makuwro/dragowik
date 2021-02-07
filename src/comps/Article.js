@@ -241,7 +241,7 @@ class Article extends React.Component {
             Matches[i][0], 
             "<" + (Match[0] === "bAsterisk" ? "b" : 
             (Match[0] === "newLine" ? "div" : Match[0])) +
-            (headerId ? " id=" + headerId : "") +
+            (headerId ? " id=\"" + headerId + "\"" : "") +
             ">" + 
             text + 
             "</" + (Match[0] === "bAsterisk" ? "b" : 
