@@ -45,7 +45,8 @@ article {
   overflow-wrap: anywhere;
 }
 
-#article-content div {
+#article-content p {
+  margin-top: 0;
   margin-bottom: 2vh;
 }
 
