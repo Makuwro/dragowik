@@ -40,7 +40,6 @@ function App() {
   const [article, setArticle] = useState(null);
   const [articleMode, setArticleMode] = useState(null);
   const [articleName, setArticleName] = useState(null);
-  const [location, setLocation] = useState(null);
   const [redirect, setRedirect] = useState(null);
   
   function VerifyArticle(props) {
