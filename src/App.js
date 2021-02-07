@@ -132,7 +132,7 @@ function App() {
     };
     
     updateArticle();
-  }, [articleName, articleMode]);
+  }, [articleName, articleMode, redirect]);
   
   return (
     <HelmetProvider>

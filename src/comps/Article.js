@@ -20,7 +20,6 @@ class Article extends React.Component {
     this.metadataRef = React.createRef();
     this.headerRefs = [];
     this.vanishArticle = this.vanishArticle.bind(this);
-    this.redirectArticle = this.redirectArticle.bind(this);
     this.checkArticleLinks = this.checkArticleLinks.bind(this);
     
     var redirectArticleName;
@@ -30,9 +29,8 @@ class Article extends React.Component {
       redirectArticleName = redirectArticle ? redirectArticle[1] : undefined;
     };
     
-    var {headers, content} = this.generateMarkup();
-    
-    content = parse(content, {
+    var SourceMarkup = this.generateMarkup();
+    var content = parse(SourceMarkup, {
       replace: (domNode) => {
         if (isHeader(domNode.name)) {
           return React.createElement(domNode.name, {
@@ -66,12 +64,40 @@ class Article extends React.Component {
     };
   };
   
-  componentDidUpdate() {
+  componentDidUpdate(prevProps) {
+    
     if (this.props.location.redirectedFrom && this.state.redirectArticleName) {
       this.setState({redirectArticleName: undefined});
     };
     
     if (!this.state.redirectArticleName) {
+      
+      if (prevProps.source !== this.props.source) {
+        this.headerRefs = [];
+        
+        var SourceMarkup = this.generateMarkup();
+        var content = parse(SourceMarkup, {
+          replace: (domNode) => {
+            if (isHeader(domNode.name)) {
+              return React.createElement(domNode.name, {
+                ref: ref => {
+                  if (ref) { this.headerRefs.push(ref) };
+                  this.setState({headers: this.headerRefs})
+                }
+              }, domToReact(domNode.children));
+            } else if (domNode.children) {
+              if (domNode.name === "a") {
+                var articleExists = this.state.nonExistentArticles[domNode.attribs.href] ? false : true; // returns unresolved promise
+                return <a onClick={this.vanishArticle} href={domNode.attribs.href} title={!articleExists ? "This article doesn't exist! Why don't we change that?" : undefined} className={!articleExists ? "article-link-invalid" : undefined}>{domToReact(domNode.children)}</a>;
+              };
+              return domNode;
+            };
+          }
+        });
+        
+        this.setState({content: content});
+      };
+      
       setTimeout(() => {
         if (this.articleRef.current) {
           this.articleRef.current.classList.add("visible");
@@ -86,14 +112,6 @@ class Article extends React.Component {
     
     const {history} = this.props;
     setTimeout(() => history.push(event.target.getAttribute("href")), 300);
-  };
-  
-  redirectArticle() {
-    console.log("Redirecting from " + this.props.articleName + " to " + this.state.redirectArticleName);
-    return <Redirect to={{
-      pathname: "/wiki/article/" + this.state.redirectArticleName,
-      redirectedFrom: this.props.articleName
-    }} />
   };
   
   checkArticleLinks() {
@@ -238,12 +256,16 @@ class Article extends React.Component {
       
     };
   
-    return {content: newSource, headers: Object.keys(headerIds)};
+    return newSource;
   };
   
   render() {
     if (this.state.redirectArticleName && !this.props.location.redirectedFrom) {
-      return (this.redirectArticle());
+      console.log("Redirecting from " + this.props.articleName + " to " + this.state.redirectArticleName);
+      return <Redirect to={{
+        pathname: "/wiki/article/" + this.state.redirectArticleName,
+        redirectedFrom: this.props.articleName
+      }} />
     } else {
       return (
         <div>
