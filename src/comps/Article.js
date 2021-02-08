@@ -20,6 +20,7 @@ class Article extends React.Component {
     this.metadataRef = React.createRef();
     this.headerRefs = [];
     this.nonExistentArticles = [];
+    this.linksToCheck = [];
     this.vanishArticle = this.vanishArticle.bind(this);
     this.checkArticleLinks = this.checkArticleLinks.bind(this);
     this.fixSource = this.fixSource.bind(this);
@@ -34,22 +35,25 @@ class Article extends React.Component {
     
     this.state = {
       redirectArticleName: redirectArticleName,
-      content: this.fixSource()
+      content: "",
+      nonExistentArticles: {}
     };
     
   };
   
   async componentDidMount() {
-    this.checkArticleLinks();
+    this.headerRefs = [];
+    var markup = this.generateMarkup();
+    await this.checkArticleLinks();
+    this.setState({content: this.fixSource(markup)});
+    
     if (!this.state.redirectArticleName && this.articleRef.current) { 
       setTimeout(() => this.articleRef.current.classList.add("visible"), 300);
     };
   };
   
-  fixSource() {
-    this.headerRefs = [];
-    var SourceMarkup = this.generateMarkup();
-    var content = parse(SourceMarkup, {
+  fixSource(markup) {
+    var content = parse(markup, {
       replace: (domNode) => {
         if (isHeader(domNode.name)) {
           return React.createElement(domNode.name, {
@@ -61,7 +65,7 @@ class Article extends React.Component {
         } else if (domNode.children) {
           if (domNode.name === "a") {
             var articleLocation = domNode.attribs.href;
-            var blueLink = !this.nonExistentArticles[articleLocation];
+            var blueLink = !this.state.nonExistentArticles[articleLocation];
             return <a onClick={this.vanishArticle} href={articleLocation} title={!blueLink ? "This article doesn't exist! Why don't we change that?" : undefined} className={!blueLink ? "article-link-invalid" : undefined}>{domToReact(domNode.children)}</a>;
           };
           return domNode;
@@ -100,11 +104,47 @@ class Article extends React.Component {
     setTimeout(() => history.push(event.target.getAttribute("href")), 300);
   };
   
-  checkArticleLinks() {
+  async checkArticleLinks() {
     // Make sure we got something to work with
-    if (!this.props.content) return;
+    if (!this.props.source) return;
     
-    
+    for (var i = 0; this.linksToCheck.length > i; i++) {
+      
+      var possibleName = this.linksToCheck[i];
+      
+      console.log("Checking if " + possibleName + " exists...");
+                      
+      // Check the cache
+      const ArticleLocation = "/wiki/article/" + possibleName;
+      if (this.nonExistentArticles[ArticleLocation]) return false;
+      
+      // Check the server
+      const ArticleNameArray = [...ArticleLocation.matchAll(ArticleNameRegex)][0];
+      const ArticleName = ArticleNameArray ? ArticleNameArray[1] : undefined;
+      
+      if (!ArticleName) return false;
+      
+      // Now let's check with the server
+      var articleExists = false;
+      try {
+        const Response = await fetch("/api/article/" + ArticleName);
+        if (!Response.ok) {
+          console.log(ArticleName + " doesn't exist");
+        } else {
+          articleExists = true;
+        };
+      } catch (err) {
+        console.warn("Couldn't verify that " + ArticleName + " exists. Assuming it doesn't exist.");
+      };
+      
+      if (!articleExists) {
+        this.setState(state => {
+          var nonExistentArticles = state.nonExistentArticles;
+          nonExistentArticles[ArticleLocation] = true;
+          return {nonExistentArticles: nonExistentArticles};
+        });
+      };
+    };
   };
   
   generateMarkup() {
@@ -112,7 +152,6 @@ class Article extends React.Component {
     const Matches = [...this.props.source.matchAll(WikiMarkupRegex)];
     var newSource = this.props.source;
     var headerIds = {};
-    var _this = this;
     
     for (var i = 0; Matches.length > i; i++) {
       const Match = Object.keys(Matches[i].groups).filter((key) => {
@@ -147,37 +186,9 @@ class Article extends React.Component {
                     ChildMatch[0] === "aBracket" ? "a" : undefined
                   );
                   
-                  async function verifyArticle(possibleName) {
-                    console.log("Checking if " + possibleName + " exists...");
-                    
-                    // Check the cache
-                    if (_this.nonExistentArticles[possibleName]) return false;
-                    
-                    // Check the server
-                    const ArticleNameArray = [...possibleName.matchAll(ArticleNameRegex)][0];
-                    const ArticleName = ArticleNameArray ? ArticleNameArray[1] : undefined;
-                    
-                    if (!ArticleName) return false;
-                    
-                    // Now let's check with the server
-                    var articleExists = false;
-                    try {
-                      const Response = await fetch("/api/article/" + ArticleName);
-                      if (!Response.ok) {
-                        console.log(ArticleName + " doesn't exist");
-                      };
-                    } catch (err) {
-                      console.warn("Couldn't verify that " + ArticleName + " exists. Assuming it doesn't exist.");
-                    };
-                    
-                    if (!articleExists) {
-                      _this.nonExistentArticles[possibleName] = true;
-                    };
-                  };
-                  
                   var spaceText;
                   if (ElementName === "a") {
-                    verifyArticle("/wiki/article/" + childText);
+                    this.linksToCheck.push(childText);
                     spaceText = childText.replace("_", " ");
                   };
                   
