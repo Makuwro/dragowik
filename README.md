@@ -12,5 +12,5 @@ Instructions are coming soon.
 - SQLite3 database, so you don't need to buy a whole database to have a nice wiki
 
 ## Acknowledgements
-- [**Draguwro**](https://twitter.com/Draguwro) - Maintainer of Dragowik
+- [**Draguwro**](https://twitter.com/Draguwro) - Maintainer of Makuwiki
 - [Thomas Jockin](http://thomasjockin.com) - Type designer of [Lexend Deca](https://github.com/ThomasJockin/lexend), the default font of the wiki
