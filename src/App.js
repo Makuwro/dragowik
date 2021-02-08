@@ -105,7 +105,7 @@ function App() {
                   }</title>
                 </Helmet>
                 <Header wikiName="The Showrunners Wiki" />
-                <Article articleName={displayName} redirect={redirect} specialName={name} exists={articleInfo ? true : false} source={articleInfo ? articleInfo.source : undefined} />
+                <Article articleName={displayName} redirect={redirect} specialName={name} exists={articleInfo ? true : false} source={articleInfo ? articleInfo.source : undefined} timestamp={articleInfo ? articleInfo.lastUpdated : undefined}/>
               </div>
             );
           

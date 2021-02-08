@@ -266,6 +266,28 @@ class Article extends React.Component {
         redirectedFrom: this.props.articleName
       }} />
     } else {
+      
+      var timestamp;
+      if (this.props.timestamp) {     
+        var checkDate = new Date();
+        var updateDate = new Date(this.props.timestamp);
+        updateDate.setHours(updateDate.getHours() - (checkDate.getTimezoneOffset() / 60));
+        var length = new Date() - updateDate;
+        var seconds = Math.floor(length / 1000);
+        if (seconds > 0) {
+          var minutes = Math.floor(seconds / 60);
+          var hours = Math.floor(minutes / 60);
+          var days = Math.floor(hours / 24);
+          timestamp = days >= 1 ? days + " day" + (days > 1 ? "s" : "") : (
+            hours >= 1 ? hours + " hour" + (hours > 1 ? "s" : "") : (
+              minutes >= 1 ? minutes + " minute" + (minutes > 1 ? "s" : "") : seconds + " second" + (seconds > 1 ? "s" : "")
+            )
+          );
+        } else {
+          timestamp = -1;
+        };
+      };
+      
       return (
         <div>
           <Outline exists={this.props.exists} articleName={this.props.articleName} headers={this.state.headers} />
@@ -273,18 +295,18 @@ class Article extends React.Component {
             <div id="article-metadata" ref={this.metadataRef}>
               <h1 id="article-name">{this.props.articleName}</h1>
               {this.props.location.redirectedFrom ? <div id="article-redirect-notif">Redirected from <Link to={this.props.location.redirectedFrom + "?redirect=no"}>{this.props.location.redirectedFrom}</Link></div> : undefined}
-              <div id="article-contributors">
-                <div id="article-contributor-bubbles">
-                  <span></span>
-                  <span></span>
-                  <span></span>
-                </div>
-                <div id="article-contribs-text">
-                  <span id="article-contributors-amount">0 contributors</span>
-                  <span id="article-contribs-divider">•</span>
-                  <span id="article-update-time">Just updated</span>
-                </div>
-              </div>
+              <div id="article-contributors">{
+                timestamp ? (
+                  <>
+                    <div id="article-contributor-bubbles"><span /><span /><span /></div>
+                    <div id="article-contribs-text">
+                      <span id="article-contributors-amount">0 contributors</span>
+                      <span id="article-contribs-divider">•</span>
+                      <span id="article-update-time">{"Updated " + (timestamp < 0 ? "just now" : timestamp + " ago")}</span>
+                    </div>
+                  </>
+                ) : "No contributors . . . but you could be one 😳"
+              }</div>
             </div>
             <div id="article-content">{
               this.props.exists ? this.state.content : <div>This article doesn't exist. Why not <Link to={"/wiki/article/" + this.props.specialName + "/edit?mode=source"}>create it</Link>?</div>
