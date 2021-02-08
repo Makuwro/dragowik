@@ -35,9 +35,9 @@ class Outline extends React.Component {
               </div>
               
               <div id="nav-outline-list">{this.props.headers ? this.props.headers.map(headerId => 
-                React.createElement(headerId.tagName.toLowerCase(), {
+                <a href={"#" + headerId.id}>{React.createElement(headerId.tagName.toLowerCase(), {
                   key: uuidv4()
-                }, headerId.textContent)
+                }, headerId.textContent)}</a>
               ) : undefined}</div>
             </div>
             

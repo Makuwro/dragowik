@@ -207,6 +207,14 @@ nav {
     overflow-x: hidden;
   }
   
+  #nav-outline-list a {
+    color: black;
+  }
+  
+  #nav-outline-list a:hover {
+    color: #3c78d8;
+  }
+  
   #nav-outline-list h1, #nav-outline-list h2, #nav-outline-list h3 {
     padding-right: 1vw;
   }
