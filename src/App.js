@@ -16,7 +16,7 @@ import Home from "./comps/Home";
 
 
 function getArticleName(name, edit) {
-  const FrontBackRegex = /[^_*]\w+[^_*]/g;
+  const FrontBackRegex = /[^_*][^ ]+[^_*]/g;
   const FrontBackMatch = name.match(FrontBackRegex);
   
   if (name.includes(" ")) {
