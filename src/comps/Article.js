@@ -18,7 +18,6 @@ class Article extends React.Component {
     super(props);
     this.articleRef = React.createRef();
     this.metadataRef = React.createRef();
-    this.headerRefs = [];
     this.nonExistentArticles = [];
     this.linksToCheck = [];
     this.vanishArticle = this.vanishArticle.bind(this);
@@ -42,10 +41,11 @@ class Article extends React.Component {
   };
   
   async componentDidMount() {
-    this.headerRefs = [];
-    var markup = this.generateMarkup();
-    await this.checkArticleLinks();
-    this.setState({content: this.fixSource(markup)});
+    if (this.props.source) {
+      var markup = this.generateMarkup();
+      await this.checkArticleLinks();
+      this.setState({content: this.fixSource(markup)});
+    };
     
     if (!this.state.redirectArticleName && this.articleRef.current) { 
       setTimeout(() => this.articleRef.current.classList.add("visible"), 300);
@@ -53,6 +53,7 @@ class Article extends React.Component {
   };
   
   fixSource(markup) {
+    this.headerRefs = [];
     var content = parse(markup, {
       replace: (domNode) => {
         if (isHeader(domNode.name)) {
@@ -76,7 +77,7 @@ class Article extends React.Component {
     return content;
   };
   
-  componentDidUpdate(prevProps) {
+  async componentDidUpdate(prevProps) {
     
     if (this.props.location.redirectedFrom && this.state.redirectArticleName) {
       this.setState({redirectArticleName: undefined});
@@ -84,8 +85,10 @@ class Article extends React.Component {
     
     if (!this.state.redirectArticleName) {
       
-      if (prevProps.source !== this.props.source) {
-        this.setState({content: this.fixSource()});
+      if (this.props.source && prevProps.source !== this.props.source) {
+        var markup = this.generateMarkup();
+        await this.checkArticleLinks();
+        this.setState({content: this.fixSource(markup)});
       };
       
       setTimeout(() => {
