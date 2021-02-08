@@ -289,7 +289,7 @@ class Article extends React.Component {
       };
       
       return (
-        <div>
+        <>
           <Outline exists={this.props.exists} articleName={this.props.articleName} headers={this.state.headers} />
           <article id="article-container" ref={this.articleRef}>
             <div id="article-metadata" ref={this.metadataRef}>
@@ -312,7 +312,7 @@ class Article extends React.Component {
               this.props.exists ? this.state.content : <div>This article doesn't exist. Why not <Link to={"/wiki/article/" + this.props.specialName + "/edit?mode=source"}>create it</Link>?</div>
             }</div>
           </article>
-        </div>
+        </>
       );
     }
   };

@@ -98,7 +98,7 @@ function App() {
           
           case "view":
             return setArticle(
-              <div>
+              <>
                 <Helmet>
                   <title>{
                     displayName + " - The Showrunners Wiki"
@@ -106,19 +106,19 @@ function App() {
                 </Helmet>
                 <Header wikiName="The Showrunners Wiki" />
                 <Article articleName={displayName} redirect={redirect} specialName={name} exists={articleInfo ? true : false} source={articleInfo ? articleInfo.source : undefined} timestamp={articleInfo ? articleInfo.lastUpdated : undefined}/>
-              </div>
+              </>
             );
           
           case "source":
             return setArticle(
-              <div>
+              <>
                 <Helmet>
                   <title>{
                     "Editing the source of " + displayName + " - The Showrunners Wiki"
                   }</title>
                 </Helmet>
                 <SourceEditor articleName={displayName} specialName={name} source={articleInfo ? articleInfo.source : undefined} />
-              </div>
+              </>
             );
             
           case "visual":
@@ -136,7 +136,7 @@ function App() {
   
   return (
     <HelmetProvider>
-      <div id="app">
+      <>
         <Router>
           <Switch>
             <Route exact path="/wiki/article/:name/edit">
@@ -175,7 +175,7 @@ function App() {
             </Route>
           </Switch>
         </Router>
-      </div>
+      </>
     </HelmetProvider>
   );
   
