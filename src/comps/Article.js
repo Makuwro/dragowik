@@ -45,6 +45,16 @@ class Article extends React.Component {
       var markup = this.generateMarkup();
       await this.checkArticleLinks();
       this.setState({content: this.fixSource(markup)});
+      if (this.props.location.hash !== "") {
+        setTimeout(() => {
+          console.log(this.props.location.hash);
+          var element = document.getElementById(this.props.location.hash.replace("#", ""));
+          window.scrollTo({
+            behavior: element ? "smooth" : "auto",
+            top: element ? element.offsetTop : 0
+          });
+        }, 500);
+      };
     };
     
     if (!this.state.redirectArticleName && this.articleRef.current) { 
@@ -61,7 +71,8 @@ class Article extends React.Component {
             ref: ref => {
               if (ref) { this.headerRefs.push(ref) };
               this.setState({headers: this.headerRefs})
-            }
+            },
+            id: domNode.attribs.id
           }, domToReact(domNode.children));
         } else if (domNode.children) {
           if (domNode.name === "a") {
