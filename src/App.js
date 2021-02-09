@@ -21,12 +21,12 @@ function getArticleName(name, edit) {
   
   if (name.includes(" ")) {
     // Prevent possible double redirect
-    var underscoredName = name.replace(" ", "_").match(FrontBackRegex)[0];
+    var underscoredName = name.replaceAll(" ", "_").match(FrontBackRegex)[0];
     return <Redirect to={"/wiki/article/" + underscoredName + (edit ? "/edit" : "")} />;
   } else if (FrontBackMatch && name !== name.match(FrontBackRegex)[0]) {
     return <Redirect to={"/wiki/article/" + name.match(FrontBackRegex)[0] + (edit ? "/edit" : "")} />;
   };
-  var displayName = name.replace("_", " ");
+  var displayName = name.replaceAll("_", " ");
   return displayName;
 };
 /*
