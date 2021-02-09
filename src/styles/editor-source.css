@@ -28,6 +28,7 @@
   height: 30vh;
   padding: 5vw;
   font-size: 1rem;
+  line-height: 2.5vh;
 }
 
 #editor-source-form input[type=submit] {
