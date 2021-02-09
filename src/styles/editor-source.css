@@ -1,14 +1,77 @@
+#editor-article-info {
+  margin: 5vh 4vw 0;
+  font-weight: bold;
+}
+
+#editor-name-notif {
+  text-transform: uppercase;
+  color: gray;
+}
+
+#editor-article-name {
+  font-size: 4rem;
+  margin: 0;
+}
+
 #editor-source-form {
   margin-top: 3vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 #editor-source-textarea {
   width: 80vw;
   resize: none;
-  display: block;
   margin: auto;
-  border: 1vw dashed gray;
-  height: 50vh;
+  border: 0.75vw dashed #899ff0;
+  height: 30vh;
   padding: 5vw;
-  font-size: 4vw;
+  font-size: 1rem;
+}
+
+#editor-source-form input[type=submit] {
+  background: #899ff0;
+  border: none;
+  padding: 2vh 0;
+  font-size: 1.25rem;
+  letter-spacing: 0.025vw;
+  margin-top: 3vh;
+  color: white;
+  font-family: inherit;
+  width: 80%;
+  cursor: pointer;
+}
+
+/* Responsive stuff */
+@media screen and (min-width: 768px) {
+  
+  #editor-source-textarea {
+    width: 85vw;
+    padding: 2vw;
+    border: 0.5vw dashed #899ff0;
+    height: 40vh;
+  }
+  
+  #editor-source-form input[type=submit] {
+    margin-top: 5vh;
+    width: 30%;
+  }
+  
+}
+
+@media screen and (min-width: 1024px) {
+  
+  #editor-source-textarea {
+    border: 0.25vw dashed #899ff0;
+    width: 87vw;
+  }
+  
+  #editor-source-form input[type=submit] {
+    margin-top: 5vh;
+    padding: 1vh 0;
+    width: 30%;
+    font-size: 1.5rem;
+  }
+  
 }
