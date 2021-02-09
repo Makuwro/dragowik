@@ -68,7 +68,7 @@ nav {
 #nav-outline-list {
   font-size: 7.5vw;
   height: 95%;
-  overflow: scroll;
+  overflow: hidden auto;
 }
 
 #nav-outline-list h1, #nav-outline-list h2, #nav-outline-list h3 {
@@ -201,10 +201,6 @@ nav {
   #nav-topic-name-text {
     font-size: 1.25vw;
     letter-spacing: 0.1vw;
-  }
-  
-  #nav-outline-list {
-    overflow-x: hidden;
   }
   
   #nav-outline-list a {
