@@ -63,15 +63,15 @@ class SourceEditor extends React.Component {
   
   render() {
     return (
-      <div>
-        <div id="article-metadata" ref={this.metadataRef}>
-          <h1 id="article-name">{this.props.articleName}</h1>
+      <>
+        <div id="editor-article-info" ref={this.metadataRef}>
+          <h1 id="editor-article-name">{this.props.articleName}</h1>
         </div>
         <form id="editor-source-form" onSubmit={this.updateArticle}>
           <textarea id="editor-source-textarea" value={this.state.source} onChange={this.handleChange} />
           <input type="submit" value={(this.props.source ? "Update" : "Create") + " Article"} />
         </form>
-      </div>
+      </>
     );
   };
 };
