@@ -65,6 +65,7 @@ class SourceEditor extends React.Component {
     return (
       <>
         <div id="editor-article-info" ref={this.metadataRef}>
+          <div id="editor-name-notif">You are editing the source of</div>
           <h1 id="editor-article-name">{this.props.articleName}</h1>
         </div>
         <form id="editor-source-form" onSubmit={this.updateArticle}>
