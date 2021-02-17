@@ -12,9 +12,16 @@ class SourceEditor extends React.Component {
     this.handleChange = this.handleChange.bind(this);
     this.updateArticle = this.updateArticle.bind(this);
     
+    function getCookie(name) {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop().split(';').shift();
+    };
+    
     this.state = {
       source: props.source,
-      updatingArticle: false
+      updatingArticle: false,
+      sessionToken: getCookie("MakuwikiSessionToken")
     }
   };
   
@@ -37,7 +44,10 @@ class SourceEditor extends React.Component {
       
       response = await fetch("/api/article/" + this.props.specialName, {
         method: this.props.source ? "PUT" : "POST",
-        headers: {"Content-Type": "application/json"},
+        headers: {
+          "Content-Type": "application/json",
+          sessionToken: this.state.sessionToken
+        },
         body: JSON.stringify({
           source: this.state.source
         })
@@ -53,6 +63,36 @@ class SourceEditor extends React.Component {
     } catch (err) {
       console.warn("Couldn't update article: " + err);
       this.setState({updatingArticle: false});
+    };
+    
+  };
+  
+  async componentDidMount() {
+    
+    // Let's make sure the user's logged in
+    const SessionToken = this.state.sessionToken;
+    if (!SessionToken) {
+      this.props.history.push("/wiki/login?redirect=" + window.location.pathname);
+      return;
+    };
+    
+    var loggedIn = false;
+    
+    try {
+      const Response = await fetch("/api/user/session", {
+        headers: {
+          sessionToken: SessionToken
+        }
+      });
+      if (Response.ok) {
+        loggedIn = true;
+      };
+    } catch (err) {
+      
+    };
+    
+    if (!loggedIn) {
+      this.props.history.push("/wiki/login?redirect=" + window.location.pathname)
     };
     
   };
