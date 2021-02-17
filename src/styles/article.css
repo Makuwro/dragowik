@@ -11,12 +11,16 @@ article {
 
 #article-name {
   margin: 0;
-  font-size: 14vw;
+  font-size: 3rem;
 }
 
 #article-contributors {
-  margin-top: 1vh;
+  margin-top: 1rem;
   color: #595d6b;
+}
+
+#article-contributor-bubbles {
+  display: flex;
 }
 
 #article-contributor-bubbles span {
@@ -29,35 +33,40 @@ article {
 }
 
 #article-contribs-text {
-  margin-top: 1vh;
+  font-size: 1rem;
+  margin-top: 1rem;
 }
 
 #article-contribs-divider {
-  margin: 0 2vw;
+  margin: 0 0.5rem;
+}
+
+#article-update-time {
+  display: inline-block;
 }
 
 /* Content */
 #article-content {
   margin-top: 3vh;
-  line-height: 4vh;
-  font-size: 5vw;
+  line-height: 2rem;
+  font-size: 1rem;
   margin-bottom: 18vh;
   overflow-wrap: anywhere;
 }
 
 #article-content p {
   margin-top: 0;
-  margin-bottom: 2vh;
+  margin-bottom: 1.5rem;
 }
 
 #article-content h1 {
-  font-size: 8vw;
-  margin: 2.5vh 0;
+  font-size: 2rem;
+  margin: 1rem 0;
 }
 
 #article-content h2 {
-  font-size: 6.5vw;
-  margin: 2.5vh 0;
+  font-size: 1.3rem;
+  margin: 1rem 0;
 }
 
 #article-content a {
@@ -80,22 +89,6 @@ article {
 }
 
 /* Responsive stuff */
-@media screen and (min-width: 375px) {
-  
-  #article-content {
-    line-height: 5vh;
-  }
-  
-  #article-content h1 {
-    margin: 3vh 0;
-  }
-  
-  #article-content h2 {
-    margin: 3vh 0;
-  }
-  
-}
-
 @media screen and (min-width: 425px) {
   
   #article-contributors {
@@ -104,32 +97,12 @@ article {
   }
   
   #article-contribs-text {
-    font-size: 4vw;
     margin-top: 0;
-    margin-left: 2vw;
+    margin-left: 0.5rem;
   }
 }
 
 @media screen and (min-width: 768px) {
-  
-  #article-name {
-    font-size: 10vw;
-  }
-  
-  #article-content {
-    font-size: 3vw;
-    line-height: 6vw;
-  }
-  
-  #article-content h1 {
-    margin: 2vh 0;
-    font-size: 5vw;
-  }
-  
-  #article-content h2 {
-    margin: 2vh 0;
-    font-size: 4vw;
-  }
   
   #article-contributor-bubbles span {
     width: 2.5rem;
@@ -145,37 +118,17 @@ article {
     float: right;
   }
   
-  #article-name {
-    font-size: 4rem;
-  }
-  
   #article-contributor-bubbles span {
     height: 1.5rem;
     width: 1.5rem;
   }
   
   #article-contribs-text {
-    font-size: 1rem;
     margin-left: 0;
   }
   
   #article-contribs-divider {
     margin: 0 0.5rem;
-  }
-  
-  #article-content {
-    font-size: 1rem;
-    line-height: 2rem;
-  }
-  
-  #article-content h1 {
-    font-size: 2rem;
-    margin: 1rem 0;
-  }
-  
-  #article-content h2 {
-    font-size: 1.3rem;
-    margin: 1rem 0;
   }
   
 }

@@ -22,7 +22,7 @@
 }
 
 #home-welcome {
-  font-size: 10vw;
+  font-size: 2.25rem;
   text-align: center;
   font-weight: bold;
   margin-top: 15vh;
@@ -34,7 +34,7 @@
   font-weight: bold;
   color: #313131;
   letter-spacing: 0.2vw;
-  font-size: 4.5vw;
+  font-size: 1rem;
 }
 
 #home-search {
@@ -67,7 +67,7 @@
   text-align: center;
   margin-top: 15vh;
   color: gray;
-  font-size: 5vw;
+  font-size: 1.1rem;
   letter-spacing: 0.25vw;
 }
 
