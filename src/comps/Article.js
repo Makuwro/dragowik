@@ -288,6 +288,14 @@ class Article extends React.Component {
         };
       };
       
+      const AmountOfContributors = this.props.contributors ? this.props.contributors.length : 0;
+      var bubbleSpans = [];
+      for (var i = 0; (AmountOfContributors > 3 ? 3 : AmountOfContributors) > i; i++) {
+        bubbleSpans.push(<Link to={"/wiki/user/" + this.props.contributors[i].username}><img src={"/api/user/avatar?username=" + this.props.contributors[i].username} title={this.props.contributors[i].username} /></Link>);
+      };
+      
+      console.log(this.props.contributors);
+      
       return (
         <>
           <Outline exists={this.props.exists} articleName={this.props.articleName} headers={this.state.headers} />
@@ -298,9 +306,9 @@ class Article extends React.Component {
               <div id="article-contributors">{
                 timestamp ? (
                   <>
-                    <div id="article-contributor-bubbles"><span /><span /><span /></div>
+                    <div id="article-contributor-bubbles">{bubbleSpans}</div>
                     <div id="article-contribs-text">
-                      <span id="article-contributors-amount">0 contributors</span>
+                      <span id="article-contributors-amount">{AmountOfContributors + " contributor" + (AmountOfContributors > 1 ? "s" : "")}</span>
                       <span id="article-contribs-divider">•</span>
                       <span id="article-update-time">{"Updated " + (timestamp < 0 ? "just now" : timestamp + " ago")}</span>
                     </div>
