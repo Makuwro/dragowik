@@ -71,6 +71,10 @@ nav {
   overflow: hidden auto;
 }
 
+#nav-outline-list a {
+  color: white;
+}
+
 #nav-outline-list h1, #nav-outline-list h2, #nav-outline-list h3 {
   text-overflow: ellipsis;
   white-space: nowrap;
