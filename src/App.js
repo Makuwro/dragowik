@@ -11,6 +11,7 @@ import Header from "./comps/Header";
 import Article from "./comps/Article";
 import UserRegistration from "./comps/UserRegistration";
 import UserLogin from "./comps/UserLogin";
+import User from "./comps/User";
 import SourceEditor from "./comps/SourceEditor";
 import Home from "./comps/Home";
 
@@ -37,10 +38,13 @@ function VerifyEditor() {
 */
 function App() {
   
+  const [mode, setMode] = useState(null);
   const [article, setArticle] = useState(null);
   const [articleMode, setArticleMode] = useState(null);
   const [articleName, setArticleName] = useState(null);
   const [redirect, setRedirect] = useState(null);
+  const [user, setUser] = useState(null);
+  const [username, setUsername] = useState(null);
   
   function VerifyArticle(props) {
     const {name} = useParams();
@@ -53,87 +57,121 @@ function App() {
       setArticleName(name);
       setArticleMode(props.editMode ? (Mode && Mode.toLowerCase() === "source" ? Mode : "visual") : "view");
       setRedirect(Redirect);
+      setMode(1);
     });
     
-    return "";
+    return null;
+  };
+  
+  function VerifyUser(props) {
+    const {username} = useParams();
+    
+    useEffect(() => {
+      setUsername(username);
+      setMode(2);
+    });
+    
+    return null;
   };
   
   useEffect(() => {
-    async function updateArticle() {
+    
+    switch (mode) {
       
-      if (articleMode) {
+      case 1:
         
-        var name = articleName;
-        var displayName = getArticleName(name);
-        
-        if (typeof(displayName) !== "string") {
-          setArticle(displayName);
-          return;
-        };
-        
-        var articleInfo;
-        
-        try {
-          const Response = await fetch("/api/article/" + name);
-          const JSONResponse = await Response.json();
+        async function updateArticle() {
           
-          if (!Response.ok) {
-            switch (Response.status) {
-              
-              case 404: 
-                throw new Error("Article doesn't exist");
-                
-              default:
-                throw new Error("Unknown error");
-              
-            };
+          var name = articleName;
+          var displayName = getArticleName(name);
+          
+          if (typeof(displayName) !== "string") {
+            setArticle(displayName);
+            return;
           };
           
-          articleInfo = JSONResponse;
-        } catch (err) {
-          console.warn("Couldn't get article data for " + name + ": " + err);
-        };
-   
-        switch (articleMode) {
+          var articleInfo;
           
-          case "view":
-            return setArticle(
-              <>
-                <Helmet>
-                  <title>{
-                    displayName + " - The Showrunners Wiki"
-                  }</title>
-                </Helmet>
-                <Header wikiName="The Showrunners Wiki" />
-                <Article articleName={displayName} redirect={redirect} specialName={name} exists={articleInfo ? true : false} source={articleInfo ? articleInfo.source : undefined} timestamp={articleInfo ? articleInfo.lastUpdated : undefined}/>
-              </>
-            );
-          
-          case "source":
-            return setArticle(
-              <>
-                <Helmet>
-                  <title>{
-                    "Editing the source of " + displayName + " - The Showrunners Wiki"
-                  }</title>
-                </Helmet>
-                <Header wikiName="The Showrunners Wiki" />
-                <SourceEditor articleName={displayName} specialName={name} source={articleInfo ? articleInfo.source : undefined} />
-              </>
-            );
+          try {
+            const Response = await fetch("/api/article/" + name);
+            const JSONResponse = await Response.json();
             
-          case "visual":
-            return setArticle("Visual mode soon!");
+            if (!Response.ok) {
+              switch (Response.status) {
+                
+                case 404: 
+                  throw new Error("Article doesn't exist");
+                  
+                default:
+                  throw new Error("Unknown error");
+                
+              };
+            };
             
-          default: 
-            return setArticle("Unknown article mode");
+            articleInfo = JSONResponse;
+          } catch (err) {
+            console.warn("Couldn't get article data for " + name + ": " + err);
+          };
+     
+          switch (articleMode) {
             
+            case "view":
+              document.title = displayName + " - The Showrunners Wiki";
+              
+              if (articleInfo) {
+                const ContributorIds = JSON.parse(articleInfo.contributors);
+                var contributorInfo = []
+                for (var i = 0; ContributorIds.length > i; i++) {
+                  var userInfoResponse = await fetch("/api/user?id=" + ContributorIds[i]);
+                  var userInfo = await userInfoResponse.json();
+                  contributorInfo.push(userInfo);
+                };
+                articleInfo.contributors = contributorInfo;
+              };
+              
+              return setArticle(
+                <>
+                  <Header wikiName="The Showrunners Wiki" />
+                  <Article articleName={displayName} redirect={redirect} specialName={name} exists={articleInfo ? true : false} source={articleInfo ? articleInfo.source : undefined} timestamp={articleInfo ? articleInfo.lastUpdated : undefined} contributors={articleInfo ? articleInfo.contributors : undefined}/>
+                </>
+              );
+            
+            case "source":
+              document.title = "Editing the source of " + displayName + " - The Showrunners Wiki";
+              return setArticle(
+                <>
+                  <Header wikiName="The Showrunners Wiki" />
+                  <SourceEditor articleName={displayName} specialName={name} source={articleInfo ? articleInfo.source : undefined} />
+                </>
+              );
+              
+            case "visual":
+              return setArticle("Visual mode soon!");
+              
+            default: 
+              return setArticle("Unknown article mode");
+              
+          };
         };
-      };
+        
+        updateArticle();
+        break;
+        
+      case 2:
+        setUser(
+          <>
+            <Header wikiName="The Showrunners Wiki" />
+            <User username={username} />
+          </>
+        );
+        break;
+        
+      default:
+        break;
+      
     };
     
-    updateArticle();
-  }, [articleName, articleMode, redirect]);
+  }, [articleName, articleMode, redirect, mode, username]);
   
   return (
     <HelmetProvider>
@@ -146,6 +184,10 @@ function App() {
             
             <Route exact path="/wiki/article/:name">
               <VerifyArticle />{article}
+            </Route>
+            
+            <Route exact path="/wiki/user/:username">
+              <VerifyUser />{user}
             </Route>
             
             <Route exact path="/wiki/register">
@@ -164,7 +206,7 @@ function App() {
               <UserLogin />
             </Route>
             
-            <Route exact path={["/wiki", "/wiki/article"]}>
+            <Route exact path={["/wiki", "/wiki/article", "/wiki/user"]}>
               <Redirect to="/" />
             </Route>
             
