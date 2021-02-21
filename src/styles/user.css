@@ -35,6 +35,14 @@
   background-color: white;
 }
 
+.user-avatar-image-own {
+  cursor: pointer;
+}
+
+#user-avatar-image-input {
+  display: none;
+}
+
 #user-name {
   margin-top: 2rem;
   font-size: 2.5rem;
