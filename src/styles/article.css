@@ -23,9 +23,13 @@ article {
   display: flex;
 }
 
-#article-contributor-bubbles span {
-  width: 1.5rem;
-  height: 1.5rem;
+#article-contributor-bubbles a {
+  display: flex;
+}
+
+#article-contributor-bubbles a img {
+  width: 2rem;
+  height: 2rem;
   margin-right: 0.75rem;
   background-color: #595d6b;
   border-radius: 100%;
