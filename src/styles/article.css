@@ -92,6 +92,64 @@ article {
   color: #e95b5b !important;
 }
 
+#editor-formatter {
+  position: fixed;
+  bottom: 0;
+}
+
+#editor-formatter > div {
+  display: inline-block;
+  margin-right: 1rem;
+}
+
+#link-formatter {
+  position: fixed;
+  height: 100vh;
+  width: 100vw;
+  background: #6b6a6a7a;
+  z-index: 3;
+  top: 0;
+  opacity: 0;
+  transition: opacity 0.1s;
+  visibility: hidden;
+}
+
+.link-formatter-open {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+#link-formatter-ui {
+  bottom: 0;
+  background-color: white;
+  padding: 10vw;
+  position: fixed;
+  width: 100%;
+}
+
+#link-formatter-ui form {
+  width: 80%;
+}
+
+#link-formatter-ui > form > div:nth-child(1) {
+  margin-top: 0;
+}
+
+#link-formatter-ui > form > div {
+  margin-top: 1rem;
+}
+
+.link-formatter-ui-label {
+  font-weight: bold;
+  font-size: 1.25rem;
+}
+
+#link-formatter-ui > form > div > input {
+  margin-top: 0.5rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
 /* Responsive stuff */
 @media screen and (min-width: 425px) {
   
