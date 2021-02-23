@@ -3,9 +3,6 @@ import React, {useEffect, useState} from "react";
 import {Helmet, HelmetProvider} from "react-helmet-async";
 import {Switch, Route, BrowserRouter as Router, useParams, Redirect, useLocation} from "react-router-dom";
 
-// Styles
-import "./styles/navigation.css";
-
 // Makuwki components
 import Header from "./comps/Header";
 import Article from "./comps/Article";
