@@ -12,18 +12,31 @@ function isHeader(tag) {
   return typeof({"h1": true, "h2": true, "h3": true}[tag]) === "boolean";
 };
 
+function splice(str, start, end, replacement) {
+  return str.substring(0, start) + replacement + str.substring(end, str.length + 1);
+};
+
 class Article extends React.Component {
   
   constructor(props) {
     super(props);
     this.articleRef = React.createRef();
     this.metadataRef = React.createRef();
+    this.linkFormatter = React.createRef();
+    this.linkFormatterText = React.createRef();
+    this.linkFormatterURL = React.createRef();
     this.nonExistentArticles = [];
     this.linksToCheck = [];
-    this.vanishArticle = this.vanishArticle.bind(this);
-    this.checkArticleLinks = this.checkArticleLinks.bind(this);
-    this.fixSource = this.fixSource.bind(this);
-    this.generateMarkup = this.generateMarkup.bind(this);
+    
+    var functionsToBind = [
+      "vanishArticle", "checkArticleLinks", "fixSource", "generateMarkup",
+      "selectText", "formatText", "openLinkFormatter", "formatLink",
+      "changeHeading"
+    ];
+    
+    for (var i = 0; functionsToBind.length > i; i++) {
+      this[functionsToBind[i]] = this[functionsToBind[i]].bind(this);
+    };
     
     var redirectArticleName;
     var source = this.props.redirect ? props.source : false;
@@ -258,6 +271,143 @@ class Article extends React.Component {
     return newSource;
   };
   
+  selectText() {
+    
+    // Make sure it's a range
+    let selection = window.getSelection();
+    if (
+      selection.type !== "Range" || 
+      this.linkFormatter.current.classList.contains("link-formatter-open")
+    ) return;
+    console.log('new selection');
+    this.setState({selection: {
+      getRangeAtZero: selection.getRangeAt(0),
+      anchorNode: selection.anchorNode,
+      str: selection.toString()
+    }});
+    
+  };
+  
+  formatText(format) {
+    
+    // Make sure the format is valid + we got a selection
+    let selection = this.state.selection;
+    if (!{
+      b: 1, i: 1, u: 1
+    }[format] || !selection) return;
+    
+    // Get the range
+    const TextRange = selection.getRangeAtZero;
+    const ParentElement = selection.anchorNode.parentElement;
+    
+    if (ParentElement.tagName !== "P") {
+      const GPElement = ParentElement.parentElement;
+      GPElement.replaceChild(
+        document.createTextNode(ParentElement.innerHTML), ParentElement
+      );
+      GPElement.normalize();
+      return;
+    };
+        
+    ParentElement.innerHTML = splice(
+      ParentElement.innerHTML, TextRange.startOffset, 
+      TextRange.endOffset, "<" + format + ">" + selection.str + "</" + format + ">"
+    );
+    
+  };
+  
+  processingOpen = false;
+  openLinkFormatter() {
+    
+    // Debounce
+    let linkFormatterClasses = this.linkFormatter.current.classList;
+    if (this.processingOpen || linkFormatterClasses.contains("link-formatter-open")) {
+      console.warn("The link formatter is already open!");
+      return;
+    };
+    this.processingOpen = true;
+    console.log("Opening link formatter...");
+    
+    // Replace the text with the selection
+    let selection = this.state.selection;
+    if (selection) {
+      this.linkFormatterText.current.value = selection.str;
+    };
+    
+    // Let's open the GUI
+    linkFormatterClasses.add("link-formatter-open");
+    
+    // Enough debouncing
+    this.processingOpen = false;
+    
+  };
+  
+  formatLink(e) {
+    e.preventDefault();
+    
+    // Replace the selected text
+    let selection = this.state.selection;
+    if (selection) {
+      
+      // Get the range
+      const TextRange = selection.getRangeAtZero;
+      let parentElement = selection.anchorNode.parentElement;
+      
+      if (parentElement.tagName !== "P") {
+        
+        // Create the link
+        const Anchor = document.createElement("a");
+        Anchor.setAttribute("href", this.linkFormatterURL.current.value);
+        Anchor.appendChild(
+          document.createTextNode(parentElement.innerHTML)
+        );
+        
+        // Replace the text
+        const GPElement = parentElement.parentElement;
+        GPElement.replaceChild(Anchor, parentElement);
+        GPElement.normalize();
+        parentElement = GPElement;
+      } else {
+        parentElement.innerHTML = splice(
+          parentElement.innerHTML, TextRange.startOffset, 
+          TextRange.endOffset, "<a href=\"" + this.linkFormatterURL.current.value + "\">" + this.linkFormatterText.current.value + "</a>"
+        );
+      };
+      
+    } else {
+      
+      // Create the text, but put it where the carat is
+      
+    };
+    
+    // Let's close the GUI
+    this.linkFormatter.current.classList.remove("link-formatter-open");
+    
+  };
+  
+  changeHeading(e) {
+    
+    let selection = window.getSelection();
+    let selectedANode = selection.anchorNode;
+    if (selection.type === "None" || selectedANode === document.getElementById("article-content")) return;
+    
+    // Create the heading
+    let heading = document.createElement(e.target.value);
+    heading.appendChild(
+      document.createTextNode(selectedANode.textContent)
+    );
+    
+    // Replace the heading
+    let parentElement = selectedANode.parentElement;
+    parentElement.parentElement.replaceChild(
+      heading, parentElement
+    );
+    
+    // Refocus the carat
+    heading.focus();
+    
+  };
+  
   render() {
     if (this.state.redirectArticleName && !this.props.location.redirectedFrom) {
       console.log("Redirecting from " + this.props.articleName + " to " + this.state.redirectArticleName);
@@ -294,12 +444,10 @@ class Article extends React.Component {
         bubbleSpans.push(<Link to={"/wiki/user/" + this.props.contributors[i].username}><img src={"/api/user/avatar?username=" + this.props.contributors[i].username} title={this.props.contributors[i].username} /></Link>);
       };
       
-      console.log(this.props.contributors);
-      
       return (
         <>
           <Outline exists={this.props.exists} articleName={this.props.articleName} headers={this.state.headers} />
-          <article id="article-container" ref={this.articleRef}>
+          <article id="article-container" ref={this.articleRef} onSelect={this.selectText} >
             <div id="article-metadata" ref={this.metadataRef}>
               <h1 id="article-name">{this.props.articleName}</h1>
               {this.props.location.redirectedFrom ? <div id="article-redirect-notif">Redirected from <Link to={this.props.location.redirectedFrom + "?redirect=no"}>{this.props.location.redirectedFrom}</Link></div> : undefined}
@@ -316,10 +464,41 @@ class Article extends React.Component {
                 ) : "No contributors . . . but you could be one 😳"
               }</div>
             </div>
-            <div id="article-content">{
+            <div id="article-content" contentEditable={this.props.edit ? true : undefined} suppressContentEditableWarning={true}>{
               this.props.exists ? this.state.content : <div>This article doesn't exist. Why not <Link to={"/wiki/article/" + this.props.specialName + "/edit?mode=source"}>create it</Link>?</div>
             }</div>
           </article>
+          {this.props.edit ? (<>
+            <div id="editor-formatter">
+              <div id="editor-formatter-common">
+                <button onClick={() => this.formatText("b")}>Bold</button>
+                <button onClick={() => this.formatText("i")}>Italics</button>
+                <button onClick={() => this.formatText("u")}>Underline</button>
+                <button onClick={() => this.openLinkFormatter()}>Link</button>
+              </div>
+              <select id="editor-formatter-header" onChange={this.changeHeading}>
+                <option value="p">Normal text</option>
+                <option value="h1">Heading 1</option>
+                <option value="h2">Heading 2</option>
+                <option value="h3">Heading 3</option>
+              </select>
+            </div>
+            <div id="link-formatter" ref={this.linkFormatter}>
+              <div id="link-formatter-ui">
+                <form onSubmit={this.formatLink}>
+                  <div>
+                    <div className="link-formatter-ui-label">Text</div>
+                    <input ref={this.linkFormatterText} type="text" required />
+                  </div>
+                  <div>
+                    <div className="link-formatter-ui-label">Link URL</div>
+                    <input ref={this.linkFormatterURL} type="url" required />
+                  </div>
+                  <input type="submit" />
+                </form>
+              </div>
+            </div>
+          </>) : null}
         </>
       );
     }

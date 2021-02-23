@@ -115,6 +115,7 @@ function App() {
      
           switch (articleMode) {
             
+            case "visual":
             case "view":
               document.title = displayName + " - The Showrunners Wiki";
               
@@ -132,7 +133,7 @@ function App() {
               return setArticle(
                 <>
                   <Header wikiName="The Showrunners Wiki" />
-                  <Article articleName={displayName} redirect={redirect} specialName={name} exists={articleInfo ? true : false} source={articleInfo ? articleInfo.source : undefined} timestamp={articleInfo ? articleInfo.lastUpdated : undefined} contributors={articleInfo ? articleInfo.contributors : undefined}/>
+                  <Article articleName={displayName} redirect={redirect} specialName={name} exists={articleInfo ? true : false} source={articleInfo ? articleInfo.source : undefined} timestamp={articleInfo ? articleInfo.lastUpdated : undefined} contributors={articleInfo ? articleInfo.contributors : undefined} edit={articleMode === "visual" ? true : false} />
                 </>
               );
             
@@ -144,9 +145,6 @@ function App() {
                   <SourceEditor articleName={displayName} specialName={name} source={articleInfo ? articleInfo.source : undefined} />
                 </>
               );
-              
-            case "visual":
-              return setArticle("Visual mode soon!");
               
             default: 
               return setArticle("Unknown article mode");
