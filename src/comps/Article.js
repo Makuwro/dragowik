@@ -360,9 +360,9 @@ class Article extends React.Component {
       if (parentElement.tagName !== "P") {
         
         // Create the link
-        const Anchor = document.createElement("a");
-        Anchor.setAttribute("href", this.linkFormatterURL.current.value);
-        Anchor.appendChild(
+        let anchor = document.createElement("a");
+        anchor.setAttribute("href", linkFormatterURL);
+        anchor.appendChild(
           document.createTextNode(parentElement.innerHTML)
         );
         
