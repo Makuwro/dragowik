@@ -140,7 +140,7 @@ nav {
 #show-outline {
   display: flex;
   justify-content: center;
-  height: 10vh;
+  height: 7vh;
   background: #c0d4ff;
   border-radius: 12vw;
   border: none;
@@ -151,8 +151,8 @@ nav {
   z-index: 2;
 }
 
-#show-outline div {
-  font-size: 7vw;
+#show-outline > div {
+  font-size: 1.3rem;
   text-transform: uppercase;
   font-weight: bold;
   height: 100%;

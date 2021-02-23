@@ -1,5 +1,5 @@
 import React from "react";
-import "../styles/navigation.css";
+import "../styles/outline.css";
 import { v4 as uuidv4 } from "uuid";
 
 class Outline extends React.Component {
