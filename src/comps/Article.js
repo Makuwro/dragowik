@@ -20,11 +20,6 @@ class Article extends React.Component {
   
   constructor(props) {
     super(props);
-    this.articleRef = React.createRef();
-    this.metadataRef = React.createRef();
-    this.linkFormatter = React.createRef();
-    this.linkFormatterText = React.createRef();
-    this.linkFormatterURL = React.createRef();
     this.nonExistentArticles = [];
     this.linksToCheck = [];
     
@@ -70,8 +65,9 @@ class Article extends React.Component {
       };
     };
     
-    if (!this.state.redirectArticleName && this.articleRef.current) { 
-      setTimeout(() => this.articleRef.current.classList.add("visible"), 300);
+    let articleDiv = document.getElementById("article-container");
+    if (!this.state.redirectArticleName && articleDiv) { 
+      setTimeout(() => articleDiv.classList.add("visible"), 300);
     };
   };
   
@@ -116,8 +112,9 @@ class Article extends React.Component {
       };
       
       setTimeout(() => {
-        if (this.articleRef.current) {
-          this.articleRef.current.classList.add("visible");
+        let articleDiv = document.getElementById("article-container");
+        if (articleDiv) {
+          articleDiv.classList.add("visible");
         };
       }, 300);
     };
@@ -125,7 +122,7 @@ class Article extends React.Component {
   
   vanishArticle(event) {
     event.preventDefault();
-    this.articleRef.current.classList.remove("visible");
+    document.getElementById("article-container").classList.remove("visible");
     
     const {history} = this.props;
     setTimeout(() => history.push(event.target.getAttribute("href")), 300);
@@ -273,11 +270,17 @@ class Article extends React.Component {
   
   selectText() {
     
-    // Make sure it's a range
     let selection = window.getSelection();
+    if (selection.type === "None") return;
+    
+    // Set the heading type
+    let tagName = selection.anchorNode.parentElement.tagName.toLowerCase();
+    document.getElementById("editor-formatter-heading").value = tagName === "a" ? "p" : tagName;
+    
+    // Make sure it's a range
     if (
       selection.type !== "Range" || 
-      this.linkFormatter.current.classList.contains("link-formatter-open")
+      document.getElementById("link-formatter").classList.contains("link-formatter-open")
     ) return;
     console.log('new selection');
     this.setState({selection: {
@@ -320,7 +323,7 @@ class Article extends React.Component {
   openLinkFormatter() {
     
     // Debounce
-    let linkFormatterClasses = this.linkFormatter.current.classList;
+    let linkFormatterClasses = document.getElementById("link-formatter").classList;
     if (this.processingOpen || linkFormatterClasses.contains("link-formatter-open")) {
       console.warn("The link formatter is already open!");
       return;
@@ -331,7 +334,7 @@ class Article extends React.Component {
     // Replace the text with the selection
     let selection = this.state.selection;
     if (selection) {
-      this.linkFormatterText.current.value = selection.str;
+      document.getElementById("link-formatter-ui-text").value = selection.str;
     };
     
     // Let's open the GUI
@@ -352,6 +355,7 @@ class Article extends React.Component {
       // Get the range
       const TextRange = selection.getRangeAtZero;
       let parentElement = selection.anchorNode.parentElement;
+      let linkFormatterURL = document.getElementById("link-formatter-ui-url").value;
       
       if (parentElement.tagName !== "P") {
         
@@ -364,13 +368,13 @@ class Article extends React.Component {
         
         // Replace the text
         const GPElement = parentElement.parentElement;
-        GPElement.replaceChild(Anchor, parentElement);
+        GPElement.replaceChild(anchor, parentElement);
         GPElement.normalize();
         parentElement = GPElement;
       } else {
         parentElement.innerHTML = splice(
           parentElement.innerHTML, TextRange.startOffset, 
-          TextRange.endOffset, "<a href=\"" + this.linkFormatterURL.current.value + "\">" + this.linkFormatterText.current.value + "</a>"
+          TextRange.endOffset, "<a href=\"" + linkFormatterURL + "\">" + document.getElementById("link-formatter-ui-text").value + "</a>"
         );
       };
       
@@ -381,7 +385,7 @@ class Article extends React.Component {
     };
     
     // Let's close the GUI
-    this.linkFormatter.current.classList.remove("link-formatter-open");
+    document.getElementById("link-formatter").classList.remove("link-formatter-open");
     
   };
   
@@ -447,8 +451,8 @@ class Article extends React.Component {
       return (
         <>
           <Outline exists={this.props.exists} articleName={this.props.articleName} headers={this.state.headers} />
-          <article id="article-container" ref={this.articleRef} onSelect={this.selectText} >
-            <div id="article-metadata" ref={this.metadataRef}>
+          <article id="article-container" onSelect={this.selectText} >
+            <div id="article-metadata">
               <h1 id="article-name">{this.props.articleName}</h1>
               {this.props.location.redirectedFrom ? <div id="article-redirect-notif">Redirected from <Link to={this.props.location.redirectedFrom + "?redirect=no"}>{this.props.location.redirectedFrom}</Link></div> : undefined}
               <div id="article-contributors">{
@@ -476,23 +480,23 @@ class Article extends React.Component {
                 <button onClick={() => this.formatText("u")}>Underline</button>
                 <button onClick={() => this.openLinkFormatter()}>Link</button>
               </div>
-              <select id="editor-formatter-header" onChange={this.changeHeading}>
+              <select id="editor-formatter-heading" onChange={this.changeHeading}>
                 <option value="p">Normal text</option>
                 <option value="h1">Heading 1</option>
                 <option value="h2">Heading 2</option>
                 <option value="h3">Heading 3</option>
               </select>
             </div>
-            <div id="link-formatter" ref={this.linkFormatter}>
+            <div id="link-formatter">
               <div id="link-formatter-ui">
                 <form onSubmit={this.formatLink}>
                   <div>
                     <div className="link-formatter-ui-label">Text</div>
-                    <input ref={this.linkFormatterText} type="text" required />
+                    <input id="link-formatter-ui-text" type="text" required />
                   </div>
                   <div>
                     <div className="link-formatter-ui-label">Link URL</div>
-                    <input ref={this.linkFormatterURL} type="url" required />
+                    <input id="link-formatter-ui-url" type="url" required />
                   </div>
                   <input type="submit" />
                 </form>
