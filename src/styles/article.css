@@ -92,6 +92,44 @@ article {
   color: #e95b5b !important;
 }
 
+#editor-save button {
+  width: 15vw;
+  height: 15vw;
+  max-height: 56.28px;
+  max-width: 56.28px;
+  border: 2px solid #2929b2;
+  border-radius: 100%;
+  font-size: 1.5rem;
+  bottom: 12vh;
+  right: 5vw;
+  position: fixed;
+  background-color: #8383ff;
+}
+
+#editor-save-cover {
+  z-index: 4;
+  position: fixed;
+  top: 0;
+  background-color: #8383ff;
+  width: 100vw;
+  height: 100vh;
+  color: white;
+  font-weight: bold;
+  font-size: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: top 0.1s;
+}
+
+.editor-save-cover-waiting {
+  top: 100vh !important;
+}
+
+.editor-save-cover-done {
+  top: -100vh !important;
+}
+
 #editor-formatter {
   position: fixed;
   bottom: 0;
