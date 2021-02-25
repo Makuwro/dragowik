@@ -301,23 +301,23 @@ class Article extends React.Component {
     }[format] || !selection) return;
     
     // Get the range
-    const TextRange = selection.getRangeAtZero;
-    const ParentElement = selection.anchorNode.parentElement;
+    let textRange = selection.getRangeAtZero;
+    let aNode = selection.anchorNode;
+    let parentElement = aNode.parentElement;
     
-    if (ParentElement.tagName !== "P") {
-      const GPElement = ParentElement.parentElement;
+    if (parentElement.tagName !== "P") {
+      const GPElement = parentElement.parentElement;
       GPElement.replaceChild(
-        document.createTextNode(ParentElement.innerHTML), ParentElement
+        document.createTextNode(parentElement.innerHTML), parentElement
       );
       GPElement.normalize();
       return;
     };
-        
-    ParentElement.innerHTML = splice(
-      ParentElement.innerHTML, TextRange.startOffset, 
-      TextRange.endOffset, "<" + format + ">" + selection.str + "</" + format + ">"
-    );
     
+    parentElement.innerHTML = mergePrecedingHTML(aNode, parentElement.childNodes, splice(
+      aNode.nodeValue, textRange.startOffset, 
+      textRange.endOffset, "<" + format + ">" + selection.str + "</" + format + ">"
+    ));
   };
   
   processingOpen = false;
@@ -351,11 +351,12 @@ class Article extends React.Component {
     
     // Replace the selected text
     let selection = this.state.selection;
+    let aNode = selection.anchorNode;
+    let parentElement = aNode.parentElement;
     if (selection) {
       
       // Get the range
-      const TextRange = selection.getRangeAtZero;
-      let parentElement = selection.anchorNode.parentElement;
+      let textRange = selection.getRangeAtZero;
       let linkFormatterURL = document.getElementById("link-formatter-ui-url").value;
       
       if (parentElement.tagName !== "P") {
@@ -373,10 +374,10 @@ class Article extends React.Component {
         GPElement.normalize();
         parentElement = GPElement;
       } else {
-        parentElement.innerHTML = splice(
-          parentElement.innerHTML, TextRange.startOffset, 
-          TextRange.endOffset, "<a href=\"" + linkFormatterURL + "\">" + document.getElementById("link-formatter-ui-text").value + "</a>"
-        );
+        parentElement.innerHTML = mergePrecedingHTML(aNode, parentElement.childNodes, splice(
+          aNode.nodeValue, textRange.startOffset, 
+          textRange.endOffset, "<a href=\"" + linkFormatterURL + "\">" + document.getElementById("link-formatter-ui-text").value + "</a>"
+        ));
       };
       
     } else {
@@ -396,14 +397,19 @@ class Article extends React.Component {
     let selectedANode = selection.anchorNode;
     if (selection.type === "None" || selectedANode === document.getElementById("article-content")) return;
     
+    // Remove formatting
+    let formatTags = {
+      "B": 1, "A": 1, "I": 1, "U": 1
+    };
+    let parentElement = formatTags[selectedANode.parentElement.tagName] ? selectedANode.parentElement.parentElement : selectedANode.parentElement;
+    
     // Create the heading
     let heading = document.createElement(e.target.value);
     heading.appendChild(
-      document.createTextNode(selectedANode.textContent)
+      document.createTextNode(parentElement.textContent)
     );
     
     // Replace the heading
-    let parentElement = selectedANode.parentElement;
     parentElement.parentElement.replaceChild(
       heading, parentElement
     );
