@@ -76,7 +76,7 @@ class UserLogin extends React.Component {
         throw response;
       };
       
-      this.props.history.push("/");
+      this.props.history.push("/wiki");
       
     } catch (err) {
       switch (response.status) {
