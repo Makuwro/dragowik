@@ -16,6 +16,19 @@ function splice(str, start, end, replacement) {
   return str.substring(0, start) + replacement + str.substring(end, str.length + 1);
 };
 
+function mergePrecedingHTML(anchorNode, nodes, replacement) {
+  let precedingHTML = "";
+  for (var i = 0; nodes.length > i; i++) {
+    precedingHTML = precedingHTML + (
+      anchorNode === nodes[i] ? replacement : (
+        nodes[i].nodeName === "#text" ? nodes[i].data : "<" + nodes[i].nodeName + ">" + nodes[i].textContent + "</" + nodes[i].nodeName + ">"
+      )
+    );
+  };
+  
+  return precedingHTML;
+};
+
 class Article extends React.Component {
   
   constructor(props) {
