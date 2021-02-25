@@ -55,7 +55,6 @@ class Article extends React.Component {
       this.setState({content: this.fixSource(markup)});
       if (this.props.location.hash !== "") {
         setTimeout(() => {
-          console.log(this.props.location.hash);
           var element = document.getElementById(this.props.location.hash.replace("#", ""));
           window.scrollTo({
             behavior: element ? "smooth" : "auto",
@@ -285,7 +284,6 @@ class Article extends React.Component {
       selection.type !== "Range" || 
       document.getElementById("link-formatter").classList.contains("link-formatter-open")
     ) return;
-    console.log('new selection');
     this.setState({selection: {
       getRangeAtZero: selection.getRangeAt(0),
       anchorNode: selection.anchorNode,
