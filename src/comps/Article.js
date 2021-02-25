@@ -39,7 +39,7 @@ class Article extends React.Component {
     var functionsToBind = [
       "vanishArticle", "checkArticleLinks", "fixSource", "generateMarkup",
       "selectText", "formatText", "openLinkFormatter", "formatLink",
-      "changeHeading"
+      "changeHeading", "saveArticle"
     ];
     
     for (var i = 0; functionsToBind.length > i; i++) {
@@ -47,16 +47,24 @@ class Article extends React.Component {
     };
     
     var redirectArticleName;
-    var source = this.props.redirect ? props.source : false;
+    var source = props.redirect ? props.source : false;
     if (source) {
       var redirectArticle = [...source.matchAll(RedirectRegex)][0];
       redirectArticleName = redirectArticle ? redirectArticle[1] : undefined;
     };
     
+    // Get the token
+    function getCookie(name) {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop().split(';').shift();
+    };
+    
     this.state = {
       redirectArticleName: redirectArticleName,
       content: "",
-      nonExistentArticles: {}
+      nonExistentArticles: {},
+      sessionToken: getCookie("MakuwikiSessionToken")
     };
     
   };
@@ -193,6 +201,7 @@ class Article extends React.Component {
       const Match = Object.keys(Matches[i].groups).filter((key) => {
         return Matches[i].groups[key];
       });
+      let text = Matches[i].groups[Match[0]];
       
       switch (Match[0]) {
         
@@ -201,7 +210,6 @@ class Article extends React.Component {
         case "h3":
         case "bAsterisk":
         case "newLine":
-          var text = Matches[i].groups[Match[0]];
           
           // Make sure that the paragraph isn't a header
           if (Match[0] === "newLine") {
@@ -267,7 +275,7 @@ class Article extends React.Component {
             text + 
             "</" + (Match[0] === "bAsterisk" ? "b" : 
             (Match[0] === "newLine" ? "p" : Match[0])) + ">");
-          
+            
           break;
         
         default:
@@ -432,6 +440,71 @@ class Article extends React.Component {
     
   };
   
+  saving = false;
+  saveArticle() {
+    
+    // Debounce
+    if (this.saving) return;
+    this.saving = true;
+    console.log("Now saving the article!");
+    
+    // Hide the article
+    let saveCoverClasses = document.getElementById("editor-save-cover").classList;
+    saveCoverClasses.remove("editor-save-cover-waiting");
+    
+    setTimeout(async () => {
+      // Generate a new source
+      let source = "";
+      let articleContents = document.getElementById("article-content").children;
+      for (var i = 0; articleContents.length > i; i++) {
+        switch (articleContents[i].tagName) {
+          
+          case "H1":
+            source = source + (i !== 0 ? "\n" : "") + "# " + articleContents[i].textContent + (articleContents.length - 1 === i ? "" : "\n");
+            break;
+            
+          case "P":
+            source = source + articleContents[i].textContent + (articleContents.length - 1 === i ? "" : "\n");
+            break;
+            
+          default:
+            break;
+          
+        };
+      };
+      
+      console.log("Generated source: \n" + source);
+      
+      // Send it off to the server
+      try {
+        
+        let response = await fetch("/api/article/" + this.props.specialName, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            sessionToken: this.state.sessionToken
+          },
+          body: JSON.stringify({
+            source: source
+          })
+        });
+        
+        if (!response.ok) {
+          throw new Error(response);
+        };
+        
+        console.log("Updated article!");
+        saveCoverClasses.add("editor-save-cover-done");
+        this.props.history.push("/wiki/article/" + this.props.specialName);
+        
+      } catch (err) {
+        console.warn("Couldn't update the article.");
+      };
+      
+      this.saving = false;
+    }, 200);
+  };
+  
   render() {
     if (this.state.redirectArticleName && !this.props.location.redirectedFrom) {
       console.log("Redirecting from " + this.props.articleName + " to " + this.state.redirectArticleName);
@@ -493,6 +566,14 @@ class Article extends React.Component {
             }</div>
           </article>
           {this.props.edit ? (<>
+            <div id="editor-save">
+              <button onClick={this.saveArticle}>
+                💾
+              </button>
+              <div id="editor-save-cover" className="editor-save-cover-waiting">
+                💾 Saving...
+              </div>
+            </div>
             <div id="editor-formatter">
               <div id="editor-formatter-common">
                 <button onClick={() => this.formatText("b")}>B</button>
