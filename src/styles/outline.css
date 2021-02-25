@@ -138,7 +138,8 @@ nav {
 
 /* When the nav is closed */
 #show-outline {
-  display: flex;
+  display: none;
+  /*display: flex;*/
   justify-content: center;
   height: 7vh;
   background: #c0d4ff;
