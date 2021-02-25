@@ -291,10 +291,11 @@ class Article extends React.Component {
   selectText() {
     
     let selection = window.getSelection();
-    if (selection.type === "None") return;
+    let aNode = selection.anchorNode;
+    if (selection.type === "None" || aNode.parentElement.id === "article-content") return;
     
     // Set the heading type
-    let tagName = selection.anchorNode.parentElement.tagName.toLowerCase();
+    let tagName = aNode.parentElement.tagName.toLowerCase();
     let normalText = {
       "a": 1, "b": 1, "i": 1, "u": 1, "p": 1
     };
@@ -307,7 +308,7 @@ class Article extends React.Component {
     ) return;
     this.setState({selection: {
       getRangeAtZero: selection.getRangeAt(0),
-      anchorNode: selection.anchorNode,
+      anchorNode: aNode,
       str: selection.toString()
     }});
     
@@ -415,14 +416,14 @@ class Article extends React.Component {
   changeHeading(e) {
     
     let selection = window.getSelection();
-    let selectedANode = selection.anchorNode;
-    if (selection.type === "None" || selectedANode === document.getElementById("article-content")) return;
+    let aNode = selection.anchorNode;
+    if (selection.type === "None" || aNode.parentElement.id === "article-content") return;
     
     // Remove formatting
     let formatTags = {
       "B": 1, "A": 1, "I": 1, "U": 1
     };
-    let parentElement = formatTags[selectedANode.parentElement.tagName] ? selectedANode.parentElement.parentElement : selectedANode.parentElement;
+    let parentElement = formatTags[aNode.parentElement.tagName] ? aNode.parentElement.parentElement : aNode.parentElement;
     
     // Create the heading
     let heading = document.createElement(e.target.value);
