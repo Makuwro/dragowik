@@ -275,7 +275,10 @@ class Article extends React.Component {
     
     // Set the heading type
     let tagName = selection.anchorNode.parentElement.tagName.toLowerCase();
-    document.getElementById("editor-formatter-heading").value = tagName === "a" ? "p" : tagName;
+    let normalText = {
+      "a": 1, "b": 1, "i": 1, "u": 1, "p": 1
+    };
+    document.getElementById("editor-formatter-heading").value = normalText[tagName] ? "p" : tagName;
     
     // Make sure it's a range
     if (
@@ -475,10 +478,10 @@ class Article extends React.Component {
           {this.props.edit ? (<>
             <div id="editor-formatter">
               <div id="editor-formatter-common">
-                <button onClick={() => this.formatText("b")}>Bold</button>
-                <button onClick={() => this.formatText("i")}>Italics</button>
-                <button onClick={() => this.formatText("u")}>Underline</button>
-                <button onClick={() => this.openLinkFormatter()}>Link</button>
+                <button onClick={() => this.formatText("b")}>B</button>
+                <button onClick={() => this.formatText("i")}>I</button>
+                <button onClick={() => this.formatText("u")}>U</button>
+                <button onClick={() => this.openLinkFormatter()}>L</button>
               </div>
               <select id="editor-formatter-heading" onChange={this.changeHeading}>
                 <option value="p">Normal text</option>
