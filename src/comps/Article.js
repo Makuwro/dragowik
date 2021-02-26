@@ -1,5 +1,6 @@
 import React from "react";
 import "../styles/article.css";
+import ReactDOMServer from 'react-dom/server';
 import {withRouter, Redirect, Link} from "react-router-dom";
 import parse, {domToReact} from "html-react-parser";
 import Outline from "./Outline";
@@ -39,7 +40,7 @@ class Article extends React.Component {
     var functionsToBind = [
       "vanishArticle", "checkArticleLinks", "fixSource", "generateMarkup",
       "selectText", "formatText", "openLinkFormatter", "formatLink",
-      "changeHeading", "saveArticle"
+      "changeHeading", "saveArticle", "changeText"
     ];
     
     for (var i = 0; functionsToBind.length > i; i++) {
@@ -63,6 +64,7 @@ class Article extends React.Component {
     this.state = {
       redirectArticleName: redirectArticleName,
       content: "",
+      edit: this.props.edit,
       nonExistentArticles: {},
       sessionToken: getCookie("MakuwikiSessionToken")
     };
@@ -74,6 +76,7 @@ class Article extends React.Component {
       var markup = this.generateMarkup();
       await this.checkArticleLinks();
       this.setState({content: this.fixSource(markup)});
+      
       if (this.props.location.hash !== "") {
         setTimeout(() => {
           var element = document.getElementById(this.props.location.hash.replace("#", ""));
@@ -83,6 +86,10 @@ class Article extends React.Component {
           });
         }, 500);
       };
+    } else {
+      this.setState({
+        content: this.fixSource("<p>This article doesn't exist. Why not <a href=\"/wiki/article/" + this.props.specialName + "/edit?mode=source\">create it</a>?</p>")
+      });
     };
     
     let articleDiv = document.getElementById("article-container");
@@ -131,12 +138,19 @@ class Article extends React.Component {
         this.setState({content: this.fixSource(markup)});
       };
       
-      setTimeout(() => {
+      function showArticle() {
         let articleDiv = document.getElementById("article-container");
         if (articleDiv) {
           articleDiv.classList.add("visible");
         };
-      }, 300);
+      };
+      
+      if (this.state.saveTransfer) {
+        showArticle();
+        setTimeout(() => document.getElementById("editor-save-cover").classList.add("editor-save-cover-done"), 300);
+      } else {
+        setTimeout(() => showArticle(), 300);
+      };
     };
   };
   
@@ -193,7 +207,7 @@ class Article extends React.Component {
   
   generateMarkup() {
     
-    const Matches = [...this.props.source.matchAll(WikiMarkupRegex)];
+    const Matches = [...this.props.source.matchAll(new RegExp(WikiMarkupRegex.source + "|(?<begin>.+){1}", "gm"))];
     var newSource = this.props.source;
     var headerIds = {};
     
@@ -209,6 +223,7 @@ class Article extends React.Component {
         case "h2":
         case "h3":
         case "bAsterisk":
+        case "begin":
         case "newLine":
           
           // Make sure that the paragraph isn't a header
@@ -269,12 +284,12 @@ class Article extends React.Component {
           newSource = newSource.replace(
             Matches[i][0], 
             "<" + (Match[0] === "bAsterisk" ? "b" : 
-            (Match[0] === "newLine" ? "p" : Match[0])) +
+            (Match[0] === "newLine" || Match[0] === "begin" ? "p" : Match[0])) +
             (headerId ? " id=\"" + headerId + "\"" : "") +
             ">" + 
             text + 
             "</" + (Match[0] === "bAsterisk" ? "b" : 
-            (Match[0] === "newLine" ? "p" : Match[0])) + ">");
+            (Match[0] === "newLine" || Match[0] === "begin" ? "p" : Match[0])) + ">");
             
           break;
         
@@ -292,7 +307,7 @@ class Article extends React.Component {
     
     let selection = window.getSelection();
     let aNode = selection.anchorNode;
-    if (selection.type === "None" || aNode.parentElement.id === "article-content") return;
+    if (selection.type === "None" || aNode.parentElement.parentElement.id !== "article-content") return;
     
     // Set the heading type
     let tagName = aNode.parentElement.tagName.toLowerCase();
@@ -301,23 +316,18 @@ class Article extends React.Component {
     };
     document.getElementById("editor-formatter-heading").value = normalText[tagName] ? "p" : tagName;
     
-    // Make sure it's a range
-    if (
-      selection.type !== "Range" || 
-      document.getElementById("link-formatter").classList.contains("link-formatter-open")
-    ) return;
-    this.setState({selection: {
+    let selectionData = {
       getRangeAtZero: selection.getRangeAt(0),
       anchorNode: aNode,
       str: selection.toString()
-    }});
-    
+    };
+    this.setState(selection.type === "Range" ? {selectionRange: selectionData} : {selection: selectionData});
   };
   
   formatText(format) {
     
     // Make sure the format is valid + we got a selection
-    let selection = this.state.selection;
+    let selection = this.state.selectionRange;
     if (!{
       b: 1, i: 1, u: 1
     }[format] || !selection) return;
@@ -355,7 +365,7 @@ class Article extends React.Component {
     console.log("Opening link formatter...");
     
     // Replace the text with the selection
-    let selection = this.state.selection;
+    let selection = this.state.selectionRange;
     if (selection) {
       document.getElementById("link-formatter-ui-text").value = selection.str;
     };
@@ -372,7 +382,7 @@ class Article extends React.Component {
     e.preventDefault();
     
     // Replace the selected text
-    let selection = this.state.selection;
+    let selection = this.state.selectionRange;
     let aNode = selection.anchorNode;
     let parentElement = aNode.parentElement;
     if (selection) {
@@ -415,9 +425,9 @@ class Article extends React.Component {
   
   changeHeading(e) {
     
-    let selection = window.getSelection();
-    let aNode = selection.anchorNode;
-    if (selection.type === "None" || aNode.parentElement.id === "article-content") return;
+    let selection = this.state.selection || this.state.selectionRange;
+    let aNode = selection ? selection.anchorNode : undefined;
+    if (!aNode || !aNode.parentElement.parentElement || aNode.parentElement.parentElement.id !== "article-content") return;
     
     // Remove formatting
     let formatTags = {
@@ -495,8 +505,13 @@ class Article extends React.Component {
         };
         
         console.log("Updated article!");
-        saveCoverClasses.add("editor-save-cover-done");
-        this.props.history.push("/wiki/article/" + this.props.specialName);
+        
+        // Redirect to the article viewer
+        this.setState({edit: false, saveTransfer: true});
+        this.props.history.push(
+          "/wiki/article/" + this.props.specialName,
+          {resetContent: true}
+        );
         
       } catch (err) {
         console.warn("Couldn't update the article.");
@@ -504,6 +519,26 @@ class Article extends React.Component {
       
       this.saving = false;
     }, 200);
+  };
+  
+  changeText(e) {
+    if (e.charCode !== 13 || !isHeader(this.state.selection.anchorNode.parentElement.nodeName.toLowerCase())) return;
+    e.preventDefault();
+    
+    // Add a paragraph
+    let p = document.createElement("p");
+    let br = document.createElement("br");
+    let articleContent = document.getElementById("article-content");
+    p.appendChild(br);
+    articleContent.insertBefore(p, this.state.selection.anchorNode.parentElement.nextSibling);
+    
+    // Select the paragraph
+    let range = document.createRange();
+    let selection = window.getSelection();
+    range.setStart(p, 0);
+    range.collapse(true);
+    selection.removeAllRanges();
+    selection.addRange(range);
   };
   
   render() {
@@ -545,7 +580,7 @@ class Article extends React.Component {
       return (
         <>
           <Outline exists={this.props.exists} articleName={this.props.articleName} headers={this.state.headers} />
-          <article id="article-container" onSelect={this.selectText} >
+          <article id="article-container" onSelect={this.selectText} onKeyPress={this.changeText} >
             <div id="article-metadata">
               <h1 id="article-name">{this.props.articleName}</h1>
               {this.props.location.redirectedFrom ? <div id="article-redirect-notif">Redirected from <Link to={this.props.location.redirectedFrom + "?redirect=no"}>{this.props.location.redirectedFrom}</Link></div> : undefined}
@@ -562,19 +597,19 @@ class Article extends React.Component {
                 ) : "No contributors . . . but you could be one 😳"
               }</div>
             </div>
-            <div id="article-content" contentEditable={this.props.edit ? true : undefined} suppressContentEditableWarning={true}>{
-              this.props.exists ? this.state.content : <div>This article doesn't exist. Why not <Link to={"/wiki/article/" + this.props.specialName + "/edit?mode=source"}>create it</Link>?</div>
-            }</div>
+            <div id="article-content" contentEditable={this.state.edit ? true : undefined} dangerouslySetInnerHTML={{__html: ReactDOMServer.renderToString(this.state.content)}} suppressContentEditableWarning={true}></div>
           </article>
-          {this.props.edit ? (<>
-            <div id="editor-save">
+          <div id="editor-save">
+            {this.state.edit ? (
               <button onClick={this.saveArticle}>
                 💾
               </button>
-              <div id="editor-save-cover" className="editor-save-cover-waiting">
-                💾 Saving...
-              </div>
+            ) : null}
+            <div id="editor-save-cover" className="editor-save-cover-waiting">
+              💾 Saving...
             </div>
+          </div>
+          {this.state.edit ? (<>
             <div id="editor-formatter">
               <div id="editor-formatter-common">
                 <button onClick={() => this.formatText("b")}>B</button>
