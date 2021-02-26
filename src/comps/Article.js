@@ -468,14 +468,43 @@ class Article extends React.Component {
       let source = "";
       let articleContents = document.getElementById("article-content").children;
       for (var i = 0; articleContents.length > i; i++) {
-        switch (articleContents[i].tagName) {
+        let tagName = articleContents[i].tagName;
+        switch (tagName) {
           
           case "H1":
-            source = source + (i !== 0 ? "\n" : "") + "# " + articleContents[i].textContent + (articleContents.length - 1 === i ? "" : "\n");
+          case "H2":
+          case "H3":
+            source = source + (i !== 0 ? "\n" : "") + "#".repeat(Number(tagName.substring(1))) + " " + articleContents[i].textContent + (articleContents.length - 1 === i ? "" : "\n");
             break;
             
           case "P":
-            source = source + articleContents[i].textContent + (articleContents.length - 1 === i ? "" : "\n");
+            let nodes = articleContents[i].childNodes
+            for (var x = 0; nodes.length > x; x++) {
+              let node = nodes[x];
+              switch (node.nodeName) {
+                
+                case "#text":
+                  source = source + node.data;
+                  break;
+                  
+                case "B":
+                  source = source + "**" + node.textContent + "**";
+                  break;
+                  
+                case "I":
+                  source = source + "*" + node.textContent + "*";
+                  break;
+                  
+                case "U":
+                  source = source + "__" + node.textContent + "__";
+                  break;
+                  
+                default:
+                  break;
+                
+              };
+            };
+            source = source + "\n";
             break;
             
           default:
