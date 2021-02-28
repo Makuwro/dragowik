@@ -41,6 +41,7 @@ function App() {
   const [articleName, setArticleName] = useState(null);
   const [redirect, setRedirect] = useState(null);
   const [user, setUser] = useState(null);
+  const [template, setTemplate] = useState(false);
   const [username, setUsername] = useState(null);
   
   function VerifyArticle(props) {
@@ -54,6 +55,7 @@ function App() {
       setArticleName(name);
       setArticleMode(props.editMode ? (Mode && Mode.toLowerCase() === "source" ? Mode : "visual") : "view");
       setRedirect(Redirect);
+      setTemplate(props.template);
       setMode(1);
     });
     
@@ -90,8 +92,12 @@ function App() {
           var articleInfo;
           
           try {
-            const Response = await fetch("/api/article/" + name);
-            const JSONResponse = await Response.json();
+            const Response = await fetch(
+              "/api/" + 
+              (template ? "template" : "article") + 
+              "/" + name
+            );
+            const JSONResponse = Response.ok ? await Response.json() : undefined;
             
             if (!Response.ok) {
               switch (Response.status) {
@@ -130,7 +136,17 @@ function App() {
               return setArticle(
                 <>
                   <Header wikiName="The Showrunners Wiki" />
-                  <Article articleName={displayName} redirect={redirect} specialName={name} exists={articleInfo ? true : false} source={articleInfo ? articleInfo.source : undefined} timestamp={articleInfo ? articleInfo.lastUpdated : undefined} contributors={articleInfo ? articleInfo.contributors : undefined} edit={articleMode === "visual" ? true : false} />
+                  <Article 
+                    articleName={displayName} 
+                    template={template} 
+                    redirect={redirect} 
+                    specialName={name} 
+                    exists={articleInfo ? true : false} 
+                    source={articleInfo ? articleInfo.source : undefined} 
+                    timestamp={articleInfo ? articleInfo.lastUpdated : undefined} 
+                    contributors={articleInfo ? articleInfo.contributors : undefined} 
+                    edit={articleMode === "visual" ? true : false} 
+                  />
                 </>
               );
             
@@ -139,7 +155,12 @@ function App() {
               return setArticle(
                 <>
                   <Header wikiName="The Showrunners Wiki" />
-                  <SourceEditor articleName={displayName} specialName={name} source={articleInfo ? articleInfo.source : undefined} />
+                  <SourceEditor 
+                    articleName={displayName} 
+                    specialName={name} 
+                    source={articleInfo ? articleInfo.source : undefined} 
+                    template={template}
+                  />
                 </>
               );
               
@@ -166,13 +187,21 @@ function App() {
       
     };
     
-  }, [articleName, articleMode, redirect, mode, username]);
+  }, [articleName, articleMode, redirect, mode, username, template]);
   
   return (
     <HelmetProvider>
       <>
         <Router>
           <Switch>
+            <Route exact path="/wiki/template/:name/edit">
+              <VerifyArticle editMode={true} template={true} />{article}
+            </Route>
+            
+            <Route exact path="/wiki/template/:name">
+              <VerifyArticle template={true} />{article}
+            </Route>
+          
             <Route exact path="/wiki/article/:name/edit">
               <VerifyArticle editMode={true} />{article}
             </Route>

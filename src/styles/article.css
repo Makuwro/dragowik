@@ -11,6 +11,12 @@ article {
 
 #article-name {
   margin: 0;
+  font-size: 2.5rem;
+  overflow-wrap: break-word;
+}
+
+.article-template-note {
+  color: gray;
   font-size: 3rem;
 }
 
@@ -271,6 +277,26 @@ article {
   
   #article-contribs-divider {
     margin: 0 0.5rem;
+  }
+  
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #404040;
+  }
+  
+  #article-name, #article-contributors, #article-content {
+    color: white;
+  }
+  
+  #editor-formatter {
+    background-color: #5e5e5e;
+    border-top-color: #2e2e2e;
+  }
+  
+  #editor-formatter-heading, #editor-formatter-common > button {
+    background-color: #c2c2c2;
   }
   
 }

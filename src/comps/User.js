@@ -81,7 +81,7 @@ class User extends React.Component {
   
   render() {
     
-    var userAvatarElement = <img src={"/api/user/avatar?username=" + this.props.username} id="user-avatar-image" className={this.state.own ? "user-avatar-image-own" : undefined} />;
+    var userAvatarElement = <img alt="" src={"/api/user/avatar?username=" + this.props.username} id="user-avatar-image" className={this.state.own ? "user-avatar-image-own" : undefined} />;
     userAvatarElement = this.state.own ? 
       (
         <>

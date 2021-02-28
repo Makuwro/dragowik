@@ -7,7 +7,7 @@ import Outline from "./Outline";
 
 const RedirectRegex = /#REDIRECT \[\[(\w+)\]\]/g;
 const ArticleNameRegex = /\/wiki\/article\/(\w+)/g;
-const WikiMarkupRegex = /(# (?<h1>.+))|(## (?<h2>.+))|(### (?<h3>.+))|(?<element><(\w+?)( (?<elementAttribs>\w+=".+?|")|)>(?<elementText>.+?)<\/\w+?>)|(\[\[(?<aBracket>.+?)\]\])|(\*\*(?<bAsterisk>(.+))\*\*)|\n+?(?<newLine>[^#\n]+)/gm;
+const WikiMarkupRegex = /(# (?<h1>.+))|(## (?<h2>.+))|(### (?<h3>.+))|(?<element><(\w+?)( (?<elementAttribs>\w+=".+?|")|)>(?<elementText>.+?)<\/\w+?>)|(\[\[(?<aBracket>.+?)\]\])|(\*\*(?<bAsterisk>(.+))\*\*)|{{((?<template>\S+)}})|\n+?(?<newLine>[^#\n]+)/gm;
 
 function isHeader(tag) {
   return typeof({"h1": true, "h2": true, "h3": true}[tag]) === "boolean";
@@ -73,7 +73,7 @@ class Article extends React.Component {
   
   async componentDidMount() {
     if (this.props.source) {
-      var markup = this.generateMarkup();
+      var markup = await this.generateMarkup();
       await this.checkArticleLinks();
       this.setState({content: this.fixSource(markup)});
       
@@ -87,8 +87,9 @@ class Article extends React.Component {
         }, 500);
       };
     } else {
+      let tOrA = this.props.template ? "template" : "article";
       this.setState({
-        content: this.fixSource("<p>This article doesn't exist. Why not <a href=\"/wiki/article/" + this.props.specialName + "/edit?mode=source\">create it</a>?</p>")
+        content: this.fixSource("<p>This " + tOrA + " doesn't exist. Why not <a href=\"/wiki/" + tOrA + "/" + this.props.specialName + "/edit?mode=source\">create it</a>?</p>")
       });
     };
     
@@ -133,7 +134,7 @@ class Article extends React.Component {
     if (!this.state.redirectArticleName) {
       
       if (this.props.source && prevProps.source !== this.props.source) {
-        var markup = this.generateMarkup();
+        var markup = await this.generateMarkup();
         await this.checkArticleLinks();
         this.setState({content: this.fixSource(markup)});
       };
@@ -205,17 +206,18 @@ class Article extends React.Component {
     };
   };
   
-  generateMarkup() {
+  async generateMarkup() {
     
     const Matches = [...this.props.source.matchAll(new RegExp(WikiMarkupRegex.source + "|(?<begin>.+){1}", "gm"))];
     var newSource = this.props.source;
     var headerIds = {};
     
     for (var i = 0; Matches.length > i; i++) {
-      const Match = Object.keys(Matches[i].groups).filter((key) => {
-        return Matches[i].groups[key];
+      let iMatch = Matches[i];
+      const Match = Object.keys(iMatch.groups).filter((key) => {
+        return iMatch.groups[key];
       });
-      let text = Matches[i].groups[Match[0]];
+      let text = iMatch.groups[Match[0]];
       
       switch (Match[0]) {
         
@@ -231,12 +233,12 @@ class Article extends React.Component {
             const ChildMatches = [...text.matchAll(WikiMarkupRegex)];
             
             for (var x = 0; ChildMatches.length > x; x++) {
-              const ChildMatch = Object.keys(ChildMatches[x].groups).filter((key) => {
-                return ChildMatches[x].groups[key];
+              let xChild = ChildMatches[x];
+              const ChildMatch = Object.keys(xChild.groups).filter((key) => {
+                return xChild.groups[key];
               });
               
-              var childText = ChildMatches[x].groups[ChildMatch[0]];
-              
+              let childText = xChild.groups[ChildMatch[0]];
               switch (ChildMatch[0]) {
                 
                 case "aBracket":
@@ -251,7 +253,25 @@ class Article extends React.Component {
                     spaceText = childText.replace("_", " ");
                   };
                   
-                  text = text.replace(ChildMatches[x][0], "<" + ElementName + (ElementName === "a" ? " class=\"article-bracket-link\"  href=\"/wiki/article/" + childText + "\"" : "") + ">" + (spaceText || childText) + "</" + ElementName + ">");
+                  text = text.replace(xChild[0], "<" + ElementName + (ElementName === "a" ? " class=\"article-bracket-link\"  href=\"/wiki/article/" + childText + "\"" : "") + ">" + (spaceText || childText) + "</" + ElementName + ">");
+                  break;
+                  
+                case "template":
+                  
+                  // Get the template data
+                  let templateName = childText;
+                  try {
+                    let res = await fetch("/api/template/" + templateName);
+                    let JSONres = res ? await res.json() : undefined;
+                    if (!res.ok) {
+                      throw new Error("Template " + childText + " doesn't exist")
+                    };
+                    
+                    // Replace the text
+                    text = text.replace(xChild[0], JSONres.source);
+                  } catch (err) {
+                    console.warn(err);
+                  };
                   break;
                 
                 default:
@@ -603,7 +623,11 @@ class Article extends React.Component {
       const AmountOfContributors = this.props.contributors ? this.props.contributors.length : 0;
       var bubbleSpans = [];
       for (var i = 0; (AmountOfContributors > 3 ? 3 : AmountOfContributors) > i; i++) {
-        bubbleSpans.push(<Link to={"/wiki/user/" + this.props.contributors[i].username}><img src={"/api/user/avatar?username=" + this.props.contributors[i].username} title={this.props.contributors[i].username} /></Link>);
+        bubbleSpans.push(
+          <Link to={"/wiki/user/" + this.props.contributors[i].username}>
+            <img alt="" src={"/api/user/avatar?username=" + this.props.contributors[i].username} title={this.props.contributors[i].username} />
+          </Link>
+        );
       };
       
       return (
@@ -611,7 +635,19 @@ class Article extends React.Component {
           <Outline exists={this.props.exists} articleName={this.props.articleName} headers={this.state.headers} />
           <article id="article-container" onSelect={this.selectText} onKeyPress={this.changeText} >
             <div id="article-metadata">
-              <h1 id="article-name">{this.props.articleName}</h1>
+              <h1 id="article-name">{
+                this.props.template ? (
+                  <>
+                    <span className="article-template-note">
+                      &#123;&#123;
+                    </span>
+                    <>{this.props.articleName}</>
+                    <span className="article-template-note">
+                      &#125;&#125;
+                    </span> 
+                  </>
+                ) : this.props.articleName
+              }</h1>
               {this.props.location.redirectedFrom ? <div id="article-redirect-notif">Redirected from <Link to={this.props.location.redirectedFrom + "?redirect=no"}>{this.props.location.redirectedFrom}</Link></div> : undefined}
               <div id="article-contributors">{
                 timestamp ? (

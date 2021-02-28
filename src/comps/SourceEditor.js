@@ -25,10 +25,6 @@ class SourceEditor extends React.Component {
     }
   };
   
-  componentDidMount() {
-    //setTimeout(() => this.editorRef.current.classList.toggle("visible"), 300);
-  };
-  
   async updateArticle(event) {
     event.preventDefault();
     
@@ -37,12 +33,13 @@ class SourceEditor extends React.Component {
     this.setState({updatingArticle: true});
     
     // Send off the text
-    console.log("Sending request to update article...");
+    let aOrT = this.props.template ? "template" : "article";
+    console.log("Sending request to update " + aOrT + "...");
     
-    var response;
+    let response;
     try {
       
-      response = await fetch("/api/article/" + this.props.specialName, {
+      response = await fetch("/api/" + aOrT + "/" + this.props.specialName, {
         method: this.props.source ? "PUT" : "POST",
         headers: {
           "Content-Type": "application/json",
@@ -57,11 +54,11 @@ class SourceEditor extends React.Component {
         throw new Error(response);
       };
       
-      console.log("Updated article!");
-      this.props.history.push("/wiki/article/" + this.props.specialName);
+      console.log("Updated " + aOrT + "!");
+      this.props.history.push("/wiki/" + aOrT + "/" + this.props.specialName);
       
     } catch (err) {
-      console.warn("Couldn't update article: " + err);
+      console.warn("Couldn't update " + aOrT + ": " + err);
       this.setState({updatingArticle: false});
     };
     
